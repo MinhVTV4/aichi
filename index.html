@@ -253,7 +253,7 @@
         }
         .markdown-body h1 { font-size: 1.8em; }
         .markdown-body h2 { font-size: 1.5em; }
-        .markdown-body h3 { font-size: 1.25em; }
+        .markdown-body h3 { font-size: 1.1em; }
         .markdown-body p {
             margin-bottom: 0.8em; /* Slightly less space for paragraphs */
         }
@@ -376,6 +376,18 @@
             font-weight: 500;
             color: var(--tw-colors-text_dark);
         }
+        #myVocabModal .my-vocab-item .review-btn {
+            background-color: var(--tw-colors-primary_blue);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            transition: background-color 0.2s ease;
+            margin-right: 0.5rem; /* Space between buttons */
+        }
+        #myVocabModal .my-vocab-item .review-btn:hover {
+            background-color: #2563EB;
+        }
         #myVocabModal .my-vocab-item .delete-btn {
             background-color: var(--tw-colors-error_red);
             color: white;
@@ -387,6 +399,50 @@
         #myVocabModal .my-vocab-item .delete-btn:hover {
             background-color: #DC2626;
         }
+        /* Review Flashcard Display */
+        #reviewFlashcardDisplay {
+            min-height: 120px;
+            background-color: var(--tw-colors-input_field_bg);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--tw-colors-text_dark);
+            cursor: pointer;
+            text-align: center;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            transition: background-color 0.2s ease;
+        }
+        #reviewFlashcardDisplay:hover {
+            background-color: #E2E2E2;
+        }
+        #reviewFlashcardDisplay .pinyin-meaning {
+            font-size: 1rem;
+            font-weight: normal;
+            color: var(--tw-colors-text_secondary);
+            margin-top: 0.5rem;
+        }
+        #reviewControls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        #reviewControls button {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+        #reviewControls .easy-btn { background-color: var(--tw-colors-success_green); color: white; }
+        #reviewControls .hard-btn { background-color: var(--tw-colors-error_red); color: white; }
+        #reviewControls .skip-btn { background-color: var(--tw-colors-text_secondary); color: white; }
     </style>
 </head>
 <body class="bg-app_background">
@@ -539,6 +595,15 @@
                 <!-- Saved words will be listed here -->
                 <p class="text-text_secondary text-sm text-center">Chưa có từ vựng nào được lưu.</p>
             </div>
+            <div id="reviewFlashcardDisplay" class="my-5 hidden" style="background-color: var(--tw-colors-card_bg);">
+                <p id="flashcardChinese"></p>
+                <p id="flashcardPinyinMeaning" class="pinyin-meaning"></p>
+            </div>
+            <div id="reviewControls" class="my-2 hidden">
+                <button class="easy-btn btn-animation">Dễ</button>
+                <button class="skip-btn btn-animation">Bỏ qua</button>
+                <button class="hard-btn btn-animation">Khó</button>
+            </div>
             <button id="closeMyVocabButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg w-full btn-animation">Đóng</button>
         </div>
     </div>
@@ -573,7 +638,6 @@
         let model; 
 
         // UI Elements - Declared and assigned here
-        // IMPORTANT: Assign document.getElementById immediately for const/let when they are used globally
         const authSection = document.getElementById('authSection');
         const emailInput = document.getElementById('emailInput');
         const passwordInput = document.getElementById('passwordInput');
@@ -614,6 +678,14 @@
         const openMyVocabButton = document.getElementById('openMyVocabButton'); 
         const closeMyVocabButton = document.getElementById('closeMyVocabButton'); 
         const myVocabList = document.getElementById('myVocabList'); 
+        const reviewFlashcardDisplay = document.getElementById('reviewFlashcardDisplay'); 
+        const flashcardChinese = document.getElementById('flashcardChinese'); 
+        const flashcardPinyinMeaning = document.getElementById('flashcardPinyinMeaning'); 
+        const reviewControls = document.getElementById('reviewControls'); 
+        const easyBtn = reviewControls.querySelector('.easy-btn'); 
+        const hardBtn = reviewControls.querySelector('.hard-btn'); 
+        const skipBtn = reviewControls.querySelector('.skip-btn'); 
+
 
         // TTS Variables
         let selectedVoice = null;
@@ -628,10 +700,15 @@
         const lessonVocabulary = [
             { id: 'nihao', chinese: "你好", pinyin: "Nǐ hǎo", vietnamese: "Xin chào" },
             { id: 'xiexie', chinese: "谢谢", pinyin: "Xièxie", vietnamese: "Cảm ơn" },
-            { id: 'zaijian', chinese: "再见", pinyin: "Zài jiàn", vietnamese: "Tạm biệt" }
+            { id: 'zaijian', chinese: "再见", pinyin: "Zài jiàn", vietnamese: "Tạm biệt" },
+            { id: 'henhao', chinese: "很好", pinyin: "Hěn hǎo", vietnamese: "Rất tốt" },
+            { id: 'duibuqi', chinese: "对不起", pinyin: "Duìbuqǐ", vietnamese: "Xin lỗi" },
+            { id: 'meiguanxi', chinese: "没关系", pinyin: "Méi guānxi", vietnamese: "Không sao" }
         ];
         let currentVocabIndex = 0;
         let mySavedVocabulary = JSON.parse(localStorage.getItem('mySavedVocabulary')) || []; // Load from local storage
+        let currentReviewWordIndex = 0; // Index for the current word in review session
+        let reviewWords = []; // Array of words for the current review session
 
         // Practice conversation history for Gemini context
         // Initial persona prompt as the first message from the model
@@ -653,6 +730,24 @@
                 aiResponseDisplay.innerHTML = '<div class="large-spinner"></div>';
             } else {
                 aiResponseDisplay.classList.remove('loading');
+                // Check if marked is defined before using it
+                if (typeof marked === 'undefined') {
+                    console.error("Error: marked.js library is not loaded. Cannot parse Markdown.");
+                    aiResponseDisplay.innerText = text; // Display raw text if marked is not available
+                    // Fallback: Add a simple button if Chinese chars exist, without markdown processing
+                    const pureChineseCharRegexFallback = /[\u4E00-\u9FFF]/; 
+                    if (pureChineseCharRegexFallback.test(text)) {
+                         const pronounceBtn = document.createElement('button');
+                         pronounceBtn.className = 'pronounce-inline-btn btn-animation';
+                         pronounceBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l.293-.293A1 1 0 017 8h5l4.586 4.586a2 2 0 01.293.293M2 12h2"></path></svg> Nghe đọc tiếng Trung`;
+                         const chineseTextToSpeakFallback = (text.match(/[\u4E00-\u9FFF\u3000-\u303F\uFF00-\uFFEF\u2000-\u206F\u2E00-\u2E7F\s]+/g) || []).join(' ');
+                         pronounceBtn.addEventListener('click', () => speakChinese(chineseTextToSpeakFallback.trim(), 'zh-CN'));
+                         aiResponseDisplay.appendChild(pronounceBtn);
+                    }
+                    return; // Exit function if marked is not defined
+                }
+
+
                 const parsedHtml = marked.parse(text); // Parse Markdown content
                 
                 // Temporary div to hold the parsed HTML and then process it
@@ -660,9 +755,8 @@
                 tempDiv.innerHTML = parsedHtml;
 
                 // Regex to find Chinese characters within text nodes
-                // Corrected regex for clickable Chinese words to only match Chinese characters for better clickability
-                const chineseWordRegex = /([\u4E00-\u9FFF]+)/g; 
-                const pureChineseCharRegex = /[\u4E00-\u9FFF]/; 
+                const chineseWordRegex = /([\u4E00-\u9FFF]+)/g; // Corrected regex to only match Chinese characters for clickable words
+                const pureChineseCharRegex = /[\u4E00-\u9FFF]/; // To check if actual Chinese characters exist
 
                 // Function to recursively process text nodes
                 function processNode(node) {
@@ -710,7 +804,6 @@
                 aiResponseDisplay.appendChild(tempDiv); // Append the processed content
 
                 // Add overall inline pronounce button if any Chinese character exists in the original text
-                // Use a broader regex here to capture all Chinese content, including punctuation and spaces for natural reading
                 const fullChineseContentRegex = /[\u4E00-\u9FFF\u3000-\u303F\uFF00-\uFFEF\u2000-\u206F\u2E00-\u2E7F\s]+/g; 
                 
                 if (pureChineseCharRegex.test(text)) { // Check if the original text contains any Chinese characters
@@ -818,10 +911,10 @@
                         practiceInput.value = "";
                         practiceChatLog.innerHTML = ''; 
                         practiceChatLog.classList.add('hidden'); // Hide chat log on logout
-                        practiceChatHistory = [ // Reset history on logout
+                        practiceChatHistory = [ 
                             { role: "model", parts: [{ text: `Chào bạn! Tôi là trợ lý giáo viên tiếng Trung thân thiện và chuyên nghiệp. Nhiệm vụ của bạn là giúp người học tiếng Trung bằng cách giải thích từ vựng, ngữ pháp, cung cấp ví dụ, trả lời câu hỏi và đưa ra các bài tập nhỏ. Luôn trả lời bằng tiếng Việt, nhưng hãy cung cấp Hán tự và pinyin khi đề cập đến từ/cụm từ tiếng Trung. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!` }] }
                         ]; 
-                        displayAiResponse(practiceChatHistory[0].parts[0].text); // Show initial greeting on logout
+                        displayAiResponse(practiceChatHistory[0].parts[0].text); 
                     }
                 });
 
@@ -838,7 +931,7 @@
             try {
                 updateUserStatusDisplay("Đang khởi tạo AI Model...", 'text-yellow-600'); 
                 const ai = getAI(app, { backend: new GoogleAIBackend() });
-                model = getGenerativeModel(ai, { model: "gemini-2.5-flash" }); // Changed to gemini-2.5-flash
+                model = getGenerativeModel(ai, { model: "gemini-2.5-flash" }); 
                 console.log("Generative Model instance created!");
                 updateUserStatusDisplay("AI đã sẵn sàng.", 'text-success_green');
                 
@@ -956,6 +1049,9 @@
         }
 
         // --- My Vocabulary Functions (Local Storage MVP) ---
+        let currentReviewSessionWords = []; // Words for the current review session
+        let currentReviewWordIndexInSession = 0; // Index for current word in session
+
         function saveCurrentWord() {
             const currentItem = lessonVocabulary[currentVocabIndex];
             if (!currentItem) return;
@@ -975,6 +1071,9 @@
 
         function displayMyVocabulary() {
             myVocabList.innerHTML = ''; // Clear current list
+            reviewFlashcardDisplay.classList.add('hidden'); // Hide flashcard display
+            reviewControls.classList.add('hidden'); // Hide review controls
+
             if (mySavedVocabulary.length === 0) {
                 myVocabList.innerHTML = '<p class="text-text_secondary text-sm text-center">Chưa có từ vựng nào được lưu.</p>';
                 return;
@@ -985,8 +1084,15 @@
                 vocabItemDiv.className = 'my-vocab-item';
                 vocabItemDiv.innerHTML = `
                     <span>${word.chinese} (${word.pinyin}) - ${word.vietnamese}</span>
-                    <button class="delete-btn btn-animation" data-index="${index}">Xóa</button>
+                    <div>
+                        <button class="review-btn btn-animation" data-index="${index}">Ôn tập</button>
+                        <button class="delete-btn btn-animation" data-index="${index}">Xóa</button>
+                    </div>
                 `;
+                vocabItemDiv.querySelector('.review-btn').addEventListener('click', (event) => {
+                    const idxToReview = parseInt(event.target.dataset.index);
+                    startReviewSession(idxToReview);
+                });
                 vocabItemDiv.querySelector('.delete-btn').addEventListener('click', (event) => {
                     const idxToDelete = parseInt(event.target.dataset.index);
                     deleteSavedWord(idxToDelete);
@@ -1001,6 +1107,64 @@
             displayMyVocabulary(); // Refresh the displayed list
             showCustomMessageBox("Đã xóa từ vựng.");
         }
+
+        function startReviewSession(startIndex = 0) {
+            if (mySavedVocabulary.length === 0) {
+                showCustomMessageBox("Chưa có từ vựng để ôn tập.");
+                return;
+            }
+
+            myVocabList.classList.add('hidden'); // Hide word list
+            reviewFlashcardDisplay.classList.remove('hidden'); // Show flashcard
+            reviewControls.classList.remove('hidden'); // Show controls
+
+            // Prepare words for review. For now, just a shuffled copy of all saved words
+            reviewWords = [...mySavedVocabulary].sort(() => Math.random() - 0.5); 
+            currentReviewWordIndexInSession = 0;
+            showNextFlashcard();
+        }
+
+        function showNextFlashcard() {
+            if (currentReviewWordIndexInSession >= reviewWords.length) {
+                showCustomMessageBox("Đã hoàn thành buổi ôn tập!");
+                endReviewSession();
+                return;
+            }
+
+            const currentWord = reviewWords[currentReviewWordIndexInSession];
+            flashcardChinese.textContent = currentWord.chinese;
+            flashcardPinyinMeaning.textContent = ''; // Hide meaning initially
+            flashcardPinyinMeaning.classList.add('hidden'); // Hide the element
+
+            reviewFlashcardDisplay.onclick = () => {
+                flashcardPinyinMeaning.textContent = `${currentWord.pinyin} - ${currentWord.vietnamese}`;
+                flashcardPinyinMeaning.classList.remove('hidden');
+                // You can optionally add a speak button here for the revealed side
+            };
+        }
+
+        function endReviewSession() {
+            myVocabList.classList.remove('hidden'); // Show word list again
+            reviewFlashcardDisplay.classList.add('hidden'); // Hide flashcard
+            reviewControls.classList.add('hidden'); // Hide controls
+            displayMyVocabulary(); // Refresh the list
+        }
+
+        // Review controls handlers
+        easyBtn.addEventListener('click', () => {
+            currentReviewWordIndexInSession++;
+            showNextFlashcard();
+        });
+        hardBtn.addEventListener('click', () => {
+            // For a simple model, just push it to the end of current session for re-review
+            reviewWords.push(reviewWords[currentReviewWordIndexInSession]); 
+            currentReviewWordIndexInSession++;
+            showNextFlashcard();
+        });
+        skipBtn.addEventListener('click', () => {
+            currentReviewWordIndexInSession++;
+            showNextFlashcard();
+        });
 
 
         // --- TTS Functions (for settings modal) ---
@@ -1144,7 +1308,7 @@
                     practiceInput.value = finalTranscript;
                     handleSendPracticeMessage(finalTranscript); 
                 } else {
-                    updatePracticeStatus('info-text', 'Không nhận diện được giọng nói. Vui lòng thử lại.');
+                    updatePracticeStatus('info-info', 'Không nhận diện được giọng nói. Vui lòng thử lại.');
                 }
                 sendPracticeButton.disabled = false; 
                 practiceInput.disabled = false;
@@ -1217,7 +1381,10 @@
                         promptForGemini = `Tạo 3 câu ví dụ khác nhau sử dụng từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}), mỗi ví dụ kèm pinyin và nghĩa tiếng Việt.`;
                     } else if (promptType === 'quiz_question') {
                         promptForGemini = `Đặt một câu hỏi trắc nghiệm hoặc điền vào chỗ trống về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}). Cung cấp đáp án đúng và giải thích ngắn gọn.`;
-                    } else if (promptType === 'pronunciation_practice') {
+                    } else if (promptType === 'grammar_question') { // New grammar question type
+                        promptForGemini = `Giải thích ngữ pháp liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}) hoặc chủ đề ngữ pháp cơ bản cho người mới học tiếng Trung.`;
+                    }
+                    else if (promptType === 'pronunciation_practice') {
                         promptForGemini = `Người học đã nói "${userMessage}" (từ đang học là "${currentVocab.chinese}"). Bạn là giáo viên phát âm tiếng Trung, hãy đánh giá phát âm này. Chỉ ra lỗi sai (thanh điệu, pinyin, ngữ điệu) và đưa ra gợi ý sửa cụ thể. Nếu phát âm tốt, hãy khen ngợi. Luôn trả lời bằng tiếng Việt.`;
                     }
                 } else {
@@ -1308,6 +1475,8 @@
                         promptToSend = `Tạo một câu ví dụ khác với từ "${currentVocab.chinese}" (${currentVocab.pinyin}) và dịch sang tiếng Việt.`;
                     } else if (promptType === 'quiz_question') {
                         promptToSend = `Đặt một câu hỏi ôn tập (ví dụ: trắc nghiệm, điền từ) về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}) cho người mới học. Cung cấp đáp án đúng và giải thích ngắn gọn.`;
+                    } else if (promptType === 'grammar_question') { 
+                        promptToSend = `Giải thích ngữ pháp liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}). Tập trung vào cách dùng trong câu hoặc cấu trúc câu.`;
                     }
                     
                     handleSendPracticeMessage(promptToSend);
@@ -1333,10 +1502,8 @@
                 }
             });
 
-            // New: Save Word Button Listener
             if (saveWordButton) saveWordButton.addEventListener('click', saveCurrentWord);
 
-            // Settings Modal handlers
             if (openSettingsButton) openSettingsButton.addEventListener('click', () => {
                 settingsModal.classList.remove('hidden');
                 populateVoiceList(); 
@@ -1358,18 +1525,36 @@
                 rateValueSpan.textContent = speechRate.toFixed(1); 
             });
 
-            // My Vocabulary Modal handlers
             if (openMyVocabButton) openMyVocabButton.addEventListener('click', () => {
                 myVocabModal.classList.remove('hidden');
-                displayMyVocabulary(); // Show saved words when modal opens
+                displayMyVocabulary(); 
             });
             if (closeMyVocabButton) closeMyVocabButton.addEventListener('click', () => {
                 myVocabModal.classList.add('hidden');
             });
 
+            if (reviewFlashcardDisplay) reviewFlashcardDisplay.addEventListener('click', () => {
+                flashcardPinyinMeaning.textContent = `${reviewWords[currentReviewWordIndexInSession].pinyin} - ${reviewWords[currentReviewWordIndexInSession].vietnamese}`;
+                flashcardPinyinMeaning.classList.remove('hidden');
+            });
+            if (easyBtn) easyBtn.addEventListener('click', () => {
+                currentReviewWordIndexInSession++;
+                showNextFlashcard();
+            });
+            if (hardBtn) hardBtn.addEventListener('click', () => {
+                reviewWords.push(reviewWords[currentReviewWordIndexInSession]); 
+                currentReviewWordIndexInSession++;
+                showNextFlashcard();
+            });
+            if (skipBtn) skipBtn.addEventListener('click', () => {
+                currentReviewWordIndexInSession++;
+                showNextFlashcard();
+            });
+
+
             if (practiceMicrophoneButton) practiceMicrophoneButton.addEventListener('click', toggleListening);
 
-            initializeFirebase(); // Call initializeFirebase after all elements are assigned and listeners attached
+            initializeFirebase(); 
         });
 
     </script>
