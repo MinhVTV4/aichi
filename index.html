@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng Học Tiếng Trung</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Bảng màu được tinh chỉnh cho sự hài hòa và hiện đại
+                        app_background: '#F8F9FA', // Nền tổng thể của ứng dụng
+                        header_bg: '#FFFFFF',      // Nền header
+                        lesson_bg: '#F0F9FF',      // Nền phần bài học (xanh nhạt)
+                        practice_bg: '#F5F3FF',    // Nền phần luyện tập (tím nhạt)
+                        card_bg: '#FFFFFF',        // Nền các thẻ/khối nội dung
+                        input_field_bg: '#EBEBEB', // Nền các ô nhập liệu
+                        icon_color_primary: '#4A5568', // Màu icon chính
+                        send_button_bg: '#3B82F6',   // Màu nút gửi (xanh chính)
+                        text_dark: '#1A202C',       // Màu chữ đậm chính
+                        text_secondary: '#718096',  // Màu chữ phụ
+                        primary_blue: '#3B82F6',    // Màu xanh dương chính
+                        border_light: '#E2E8F0',     // Màu viền nhạt
+                        error_red: '#EF4444',       // Màu đỏ cho lỗi
+                        success_green: '#22C55E',   // Màu xanh lá cho thành công
+                        orange_accent: '#FF8C00',   // Màu cam nhấn cho "Lưu từ"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--tw-colors-app_background);
+            margin: 0; 
+            padding: 0; 
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh; 
+        }
+        #appContainer {
+            width: 100%;
+            max-width: 420px; /* Chiều rộng tối đa giống smartphone */
+            height: 100vh;    /* Chiều cao đầy đủ màn hình */
+            display: flex;
+            flex-direction: column;
+            background-color: white; 
+            border-radius: 1.5rem; /* Bo tròn các góc khung ứng dụng */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Bóng đổ mềm mại hơn */
+            overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài góc bo */
+        }
+
+        /* Spinner styles */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-left-color: #fff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        .large-spinner {
+            border: 4px solid rgba(59, 130, 246, 0.3); /* Dùng màu xanh chính */
+            border-left-color: #3B82F6; 
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden {
+            display: none !important;
+        }
+        .btn-animation {
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+        }
+        .btn-animation:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Core content area styling */
+        #mainContentArea {
+            flex-grow: 1; /* Cho phép nó mở rộng lấp đầy không gian */
+            overflow-y: auto; /* Cuộn nếu nội dung dài */
+            background-color: var(--tw-colors-app_background);
+            padding: 1rem; /* Padding đồng nhất */
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Khoảng cách giữa các section (bài học, luyện tập) */
+        }
+
+        /* Lesson section styling */
+        .lesson-section {
+            background-color: var(--tw-colors-lesson_bg);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Bóng đổ nhẹ nhàng */
+            text-align: center;
+        }
+        .lesson-vocab-display {
+            background-color: var(--tw-colors-card_bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; /* For "Save Word" button positioning */
+        }
+        .chinese-char {
+            font-size: 4rem; 
+            font-weight: 800;
+            color: var(--tw-colors-text_dark);
+            margin-bottom: 0.5rem;
+        }
+        .pinyin {
+            font-size: 1.8rem;
+            color: var(--tw-colors-primary_blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .vietnamese-meaning {
+            font-size: 1.1rem;
+            color: var(--tw-colors-text_secondary);
+        }
+        .pronounce-btn {
+            background-color: var(--tw-colors-success_green);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; 
+            font-weight: 600;
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        /* New: Save Word Button */
+        .save-word-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: var(--tw-colors-orange_accent);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+        }
+        .save-word-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .save-word-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+
+        /* Practice section styling */
+        .practice-section {
+            background-color: var(--tw-colors-practice_bg);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        /* AI Response / Feedback Container (for the latest AI response) */
+        .ai-response-container {
+            background-color: var(--tw-colors-card_bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            min-height: 50px;
+            position: relative; 
+            text-align: left; 
+        }
+        .ai-response-container.loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* New: Inline pronounce button for AI responses */
+        .pronounce-inline-btn {
+            background-color: var(--tw-colors-primary_blue);
+            color: white;
+            font-weight: 500;
+            padding: 0.3rem 0.6rem;
+            border-radius: 9999px; 
+            font-size: 0.75rem; 
+            display: inline-flex; 
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem; 
+            transition: background-color 0.2s ease;
+            position: absolute; 
+            bottom: 0.5rem;
+            right: 0.5rem;
+        }
+        .pronounce-inline-btn:hover {
+            background-color: #2563EB; 
+        }
+        .pronounce-inline-btn svg {
+            width: 14px; 
+            height: 14px;
+            color: white;
+        }
+
+        /* Markdown Styling */
+        .markdown-body {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--tw-colors-text_dark);
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+            font-weight: bold;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            color: var(--tw-colors-text_dark);
+            line-height: 1.2; /* Tighter line height for headings */
+        }
+        .markdown-body h1 { font-size: 1.8em; }
+        .markdown-body h2 { font-size: 1.5em; }
+        .markdown-body h3 { font-size: 1.25em; }
+        .markdown-body p {
+            margin-bottom: 0.8em; /* Slightly less space for paragraphs */
+        }
+        .markdown-body ul, .markdown-body ol {
+            list-style-position: outside; 
+            margin-bottom: 0.8em;
+            padding-left: 1.5em; 
+            color: var(--tw-colors-text_dark);
+        }
+        .markdown-body ul li, .markdown-body ol li {
+            margin-bottom: 0.2em;
+        }
+        .markdown-body ul li { list-style-type: disc; }
+        .markdown-body ol li { list-style-type: decimal; }
+        .markdown-body strong { font-weight: bold; }
+        .markdown-body em { font-style: italic; }
+        .markdown-body code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            background-color: #f3f4f6; 
+            padding: 0.2em 0.4em;
+            border-radius: 0.3em;
+            font-size: 0.9em;
+        }
+        .markdown-body pre {
+            background-color: #1a202c; 
+            color: #f8f9fa;
+            padding: 1em;
+            border-radius: 0.5em;
+            overflow-x: auto; 
+            margin-bottom: 1em;
+        }
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 1em;
+            color: inherit;
+        }
+
+        /* User input log in practice section */
+        #practiceChatLog {
+            background-color: var(--tw-colors-input_field_bg); 
+            padding: 1rem; /* Consistent padding */
+            border-radius: 0.5rem;
+            max-height: 150px; 
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            display: flex; /* Make it a flex container for messages */
+            flex-direction: column;
+            gap: 0.5rem; /* Space between logged user messages */
+        }
+        .practice-chat-message { 
+            background-color: white; 
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--tw-colors-text_dark);
+            align-self: flex-end; 
+            max-width: 90%;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow for logged messages */
+        }
+        
+        /* Input bar styling */
+        #practiceInputContainer { 
+            background-color: var(--tw-colors-card_bg); 
+            padding: 0.75rem 1rem;
+            border-radius: 9999px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem; 
+        }
+        #practiceInput {
+            background-color: transparent; 
+            border: none; 
+            outline: none; 
+            flex-grow: 1;
+            padding: 0.5rem 0; 
+            font-size: 1rem;
+            color: var(--tw-colors-text_dark);
+        }
+        
+        /* Settings Modal styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 350px;
+        }
+
+        /* My Vocabulary Modal */
+        #myVocabModal .my-vocab-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--tw-colors-border_light);
+            font-size: 0.9rem; /* Smaller font for list items */
+        }
+        #myVocabModal .my-vocab-item:last-child {
+            border-bottom: none;
+        }
+        #myVocabModal .my-vocab-item span {
+            font-weight: 500;
+            color: var(--tw-colors-text_dark);
+        }
+        #myVocabModal .my-vocab-item .delete-btn {
+            background-color: var(--tw-colors-error_red);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            transition: background-color 0.2s ease;
+        }
+        #myVocabModal .my-vocab-item .delete-btn:hover {
+            background-color: #DC2626;
+        }
+    </style>
+</head>
+<body class="bg-app_background">
+    <div id="appContainer">
+        <!-- Auth Section (always at the very top, visible if not logged in) -->
+        <div id="authSection" class="auth-section bg-card_bg p-8 flex flex-col items-center h-full hidden">
+            <h2 class="text-3xl font-bold text-text_dark mb-6 text-center">Đăng nhập hoặc Đăng ký</h2>
+            <input type="email" id="emailInput" placeholder="Email"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-text_dark leading-tight focus:outline-none focus:ring-2 focus:ring-primary_blue focus:border-transparent transition duration-200 mb-4 bg-input_field_bg">
+            <input type="password" id="passwordInput" placeholder="Mật khẩu"
+                   class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-text_dark leading-tight focus:outline-none focus:ring-2 focus:ring-primary_blue focus:border-transparent transition duration-200 mb-6 bg-input_field_bg">
+            
+            <div class="flex flex-col sm:flex-row gap-4 w-full">
+                <button id="signInButton"
+                        class="flex-1 bg-primary_blue hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary_blue focus:ring-opacity-75 btn-animation">
+                    Đăng nhập
+                </button>
+                <button id="signUpButton"
+                        class="flex-1 bg-success_green hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-success_green focus:ring-opacity-75 btn-animation">
+                    Đăng ký
+                </button>
+            </div>
+            <p id="authErrorMessage" class="text-error_red text-sm text-center mt-4"></p>
+        </div>
+
+        <!-- Main Learning Content (Hidden until logged in) -->
+        <div id="mainLearningContent" class="hidden flex flex-col h-full w-full">
+            <!-- Header Section -->
+            <div class="bg-header_bg p-4 border-b border-border_light flex items-center justify-between shadow-sm">
+                <div class="flex flex-col">
+                    <h1 class="text-xl font-bold text-text_dark">Học Tiếng Trung</h1>
+                    <p class="text-xs text-text_secondary" id="userStatus">AI đã sẵn sàng.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button class="icon-btn" id="openMyVocabButton">
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </button>
+                    <button class="icon-btn" id="openSettingsButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.167.992h3.393a2.25 2.25 0 0 1 2.244 2.025V19.5a2.25 2.25 0 0 1-2.244 2.25H6.75a2.25 2.25 0 0 1-2.244-2.025V6.953a2.25 2.25 0 0 1 2.244-2.25h3.393l.167-.992Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9V3.75l-2.25 1.391V6M16.5 10.5V3.75L18.75 5.141V6" />
+                        </svg>
+                    </button>
+                    <button class="icon-btn" id="signOutButtonSmall">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area - Scrollable -->
+            <div id="mainContentArea">
+                <!-- Lesson Section -->
+                <div class="lesson-section">
+                    <h2 class="text-xl font-bold text-text_dark mb-4">Bài 1: Chào hỏi cơ bản</h2>
+                    
+                    <div class="lesson-vocab-display">
+                        <button id="saveWordButton" class="save-word-btn btn-animation">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21.75A2.25 2.25 0 0 1 15.25 24H8.75A2.25 2.25 0 0 1 6.5 21.75V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 6.186 0ZM6.75 12H17.25" />
+                            </svg>
+                        </button>
+                        <p id="chineseChar" class="chinese-char">你好</p>
+                        <p id="pinyin" class="pinyin">Nǐ hǎo</p>
+                        <p id="vietnameseMeaning" class="vietnamese-meaning">Xin chào</p>
+                        <button id="pronounceButton" class="pronounce-btn btn-animation">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l.293-.293A1 1 0 017 8h5l4.586 4.586a2 2 0 01.293.293M2 12h2"></path></svg>
+                            Nghe Phát Âm
+                        </button>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <button id="prevVocabButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg btn-animation">Trước</button>
+                        <span id="vocabCounter" class="text-lg font-semibold text-text_secondary self-center">1/3</span>
+                        <button id="nextVocabButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg btn-animation">Tiếp theo</button>
+                    </div>
+                </div>
+
+                <!-- Practice Section with Gemini -->
+                <div class="practice-section">
+                    <h2 class="text-xl font-bold text-text_dark mb-4">Luyện tập & Hỏi AI</h2>
+                    
+                    <!-- Area for AI responses -->
+                    <div id="aiResponseDisplay" class="ai-response-container">
+                        <!-- Initial message or spinner/response -->
+                        <div class="markdown-body">Chào bạn! Tôi là trợ lý giáo viên tiếng Trung của bạn. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!</div>
+                        <button class="pronounce-inline-btn btn-animation" data-pronounce-text="Chào bạn! Tôi là trợ lý giáo viên tiếng Trung của bạn. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l.293-.293A1 1 0 017 8h5l4.586 4.586a2 2 0 01.293.293M2 12h2"></path></svg>
+                            Nghe đọc tiếng Trung
+                        </button>
+                    </div>
+
+                    <!-- User input log in practice section -->
+                    <div id="practiceChatLog" class="bg-input_field_bg p-3 rounded-lg max-h-[150px] overflow-y-auto mt-3 hidden">
+                        <!-- User's questions will be added here -->
+                    </div>
+
+                    <!-- Quick Action Buttons for Learning Prompts -->
+                    <div class="flex flex-wrap gap-2 mb-3 mt-4 justify-center">
+                        <button class="quick-learn-btn bg-blue-100 hover:bg-blue-200 text-primary_blue text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="explain_vocab">Giải thích từ vựng này</button>
+                        <button class="quick-learn-btn bg-purple-100 hover:bg-purple-200 text-secondary text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="example_sentence">Tạo một câu ví dụ</button>
+                        <button class="quick-learn-btn bg-green-100 hover:bg-green-200 text-success_green text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="quiz_question">Câu hỏi ôn tập</button>
+                        <button class="quick-learn-btn bg-red-100 hover:bg-red-200 text-error_red text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="pronunciation_practice">Luyện nói từ/câu</button>
+                    </div>
+
+                    <!-- Input Area for Practice -->
+                    <div id="practiceInputContainer">
+                        <input type="text" id="practiceInput" placeholder="Hỏi AI hoặc trả lời bài tập..." class="text-text_dark">
+                        <button id="sendPracticeButton" class="send-icon-btn" disabled>
+                            <div id="sendPracticeButtonSpinner" class="spinner hidden"></div>
+                            <svg id="sendPracticeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                            </svg>
+                        </button>
+                        <button id="practiceMicrophoneButton" class="icon-btn" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V8.25a3 3 0 0 1 3-3h0a3 3 0 0 1 3 3v4.5a3 3 0 0 1-3 3Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="practiceStatusMessage" class="status-message text-center mt-2 text-sm text-text_secondary"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal (Hidden by default) -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-text_dark mb-4">Cài đặt Giọng đọc</h3>
+            <div class="mb-4">
+                <label for="voiceSelect" class="block text-sm font-medium text-gray-700 mb-1">Giọng đọc:</label>
+                <select id="voiceSelect" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary_blue focus:border-primary_blue sm:text-sm rounded-md"></select>
+            </div>
+            <div class="mb-6">
+                <label for="rateSlider" class="block text-sm font-medium text-gray-700 mt-3 mb-1">Tốc độ (<span id="rateValue">0.9</span>x):</label>
+                <input type="range" id="rateSlider" min="0.5" max="2" value="0.9" step="0.1" class="w-full">
+            </div>
+            <button id="closeSettingsButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg w-full btn-animation">Đóng</button>
+        </div>
+    </div>
+
+    <!-- My Vocabulary Modal (Hidden by default) -->
+    <div id="myVocabModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-text_dark mb-4">Từ Vựng Của Tôi</h3>
+            <div id="myVocabList" class="mb-4 max-h-60 overflow-y-auto border border-border_light rounded-lg p-2">
+                <!-- Saved words will be listed here -->
+                <p class="text-text_secondary text-sm text-center">Chưa có từ vựng nào được lưu.</p>
+            </div>
+            <button id="closeMyVocabButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg w-full btn-animation">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Marked.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script type="module">
+        // Import Firebase SDKs - ALL UPDATED TO 11.9.1
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"; 
+        import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-ai.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKiBEzKjB_nKqqa9TH5b9hsHQwZ0TwdgI",
+            authDomain: "aichi-83245.firebaseapp.com",
+            projectId: "aichi-83245",
+            storageBucket: "aichi-83245.firebasestorage.app",
+            messagingSenderId: "532479272965",
+            appId: "1:532479272965:web:583c26199935939e37146c"
+        };
+
+        let app;
+        let auth;
+        let model; 
+
+        // UI Elements - Declared and assigned here
+        // IMPORTANT: Assign document.getElementById immediately for const/let when they are used globally
+        const authSection = document.getElementById('authSection');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const signInButton = document.getElementById('signInButton');
+        const signUpButton = document.getElementById('signUpButton');
+        const authErrorMessage = document.getElementById('authErrorMessage');
+
+        const mainLearningContent = document.getElementById('mainLearningContent');
+        const userStatusDisplay = document.getElementById('userStatus'); 
+        const signOutButtonSmall = document.getElementById('signOutButtonSmall'); 
+
+        const chineseChar = document.getElementById('chineseChar');
+        const pinyin = document.getElementById('pinyin');
+        const vietnameseMeaning = document.getElementById('vietnameseMeaning');
+        const pronounceButton = document.getElementById('pronounceButton');
+        const prevVocabButton = document.getElementById('prevVocabButton');
+        const nextVocabButton = document.getElementById('nextVocabButton');
+        const vocabCounter = document.getElementById('vocabCounter');
+        const saveWordButton = document.getElementById('saveWordButton'); 
+
+        const aiResponseDisplay = document.getElementById('aiResponseDisplay');
+        const practiceInput = document.getElementById('practiceInput');
+        const sendPracticeButton = document.getElementById('sendPracticeButton');
+        const sendPracticeIcon = document.getElementById('sendPracticeIcon');
+        const sendPracticeButtonSpinner = document.getElementById('sendPracticeButtonSpinner');
+        const practiceMicrophoneButton = document.getElementById('practiceMicrophoneButton');
+        const practiceStatusMessage = document.getElementById('practiceStatusMessage');
+        const quickLearnBtns = document.querySelectorAll('.quick-learn-btn'); 
+
+        const settingsModal = document.getElementById('settingsModal');
+        const openSettingsButton = document.getElementById('openSettingsButton');
+        const closeSettingsButton = document.getElementById('closeSettingsButton');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rateSlider = document.getElementById('rateSlider');
+        const rateValueSpan = document.getElementById('rateValue'); 
+
+        const myVocabModal = document.getElementById('myVocabModal'); 
+        const openMyVocabButton = document.getElementById('openMyVocabButton'); 
+        const closeMyVocabButton = document.getElementById('closeMyVocabButton'); 
+        const myVocabList = document.getElementById('myVocabList'); 
+
+        // TTS Variables
+        let selectedVoice = null;
+        let speechRate = 0.9; 
+
+        // Speech Recognition (STT) Variables
+        let recognition = null;
+        let isListening = false;
+        let finalTranscript = '';
+
+        // Lesson Data
+        const lessonVocabulary = [
+            { id: 'nihao', chinese: "你好", pinyin: "Nǐ hǎo", vietnamese: "Xin chào" },
+            { id: 'xiexie', chinese: "谢谢", pinyin: "Xièxie", vietnamese: "Cảm ơn" },
+            { id: 'zaijian', chinese: "再见", pinyin: "Zài jiàn", vietnamese: "Tạm biệt" }
+        ];
+        let currentVocabIndex = 0;
+        let mySavedVocabulary = JSON.parse(localStorage.getItem('mySavedVocabulary')) || []; // Load from local storage
+
+        // Practice conversation history for Gemini context
+        // Initial persona prompt as the first message from the model
+        let practiceChatHistory = [
+            { role: "model", parts: [{ text: `Chào bạn! Tôi là trợ lý giáo viên tiếng Trung thân thiện và chuyên nghiệp. Nhiệm vụ của bạn là giúp người học tiếng Trung bằng cách giải thích từ vựng, ngữ pháp, cung cấp ví dụ, trả lời câu hỏi và đưa ra các bài tập nhỏ. Luôn trả lời bằng tiếng Việt, nhưng hãy cung cấp Hán tự và pinyin khi đề cập đến từ/cụm từ tiếng Trung. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!` }] }
+        ];
+
+        /**
+         * Displays AI's response in the dedicated `aiResponseDisplay` area.
+         * @param {string} text - The response text from Gemini (can be Markdown).
+         * @param {boolean} isLoading - If true, displays a spinner.
+         */
+        function displayAiResponse(text, isLoading = false) {
+            aiResponseDisplay.innerHTML = ''; // Clear previous content
+            aiResponseDisplay.classList.remove('flex', 'justify-center', 'items-center'); // Reset alignment
+
+            if (isLoading) {
+                aiResponseDisplay.classList.add('loading', 'flex', 'justify-center', 'items-center');
+                aiResponseDisplay.innerHTML = '<div class="large-spinner"></div>';
+            } else {
+                aiResponseDisplay.classList.remove('loading');
+                const parsedHtml = marked.parse(text); // Parse Markdown content
+                aiResponseDisplay.innerHTML = `<div class="markdown-body">${parsedHtml}</div>`;
+
+                // Add inline pronounce button if Chinese characters are present
+                const chineseRegex = /[\u4E00-\u9FFF\u3000-\u303F\uFF00-\uFFEF\u2000-\u206F\u2E00-\u2E7F\s]+/g; // Includes CJK, CJK punctuation, full-width, general punctuation, spaces
+                const pureChineseCharRegex = /[\u4E00-\u9FFF]/; // To check if actual Chinese characters exist
+
+                const chineseSegments = text.match(chineseRegex) || [];
+                const chineseTextToSpeak = chineseSegments.filter(segment => pureChineseCharRegex.test(segment)).join(' ');
+
+                if (pureChineseCharRegex.test(text)) { 
+                    const pronounceBtn = document.createElement('button');
+                    pronounceBtn.className = 'pronounce-inline-btn btn-animation';
+                    pronounceBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l.293-.293A1 1 0 017 8h5l4.586 4.586a2 2 0 01.293.293M2 12h2"></path></svg>
+                        Nghe đọc tiếng Trung
+                    `;
+                    pronounceBtn.addEventListener('click', () => {
+                        if (chineseTextToSpeak.trim()) {
+                            speakChinese(chineseTextToSpeak.trim(), 'zh-CN');
+                        } else {
+                            showCustomMessageBox("Không tìm thấy tiếng Trung để đọc trong tin nhắn này.");
+                        }
+                    });
+                    aiResponseDisplay.appendChild(pronounceBtn);
+                }
+            }
+        }
+
+
+        /**
+         * Adds a new message to the practice chat log (for user inputs only).
+         * This is simplified since AI responses are now in `aiResponseDisplay`.
+         * @param {string} text - The message content.
+         * @param {string} sender - 'user-msg'.
+         */
+        function addPracticeChatMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `practice-chat-message ${sender}`;
+            messageDiv.innerText = text;
+            // Removed practiceChatLog, this function is now effectively unused or needs to be adapted.
+            // If you intend to have a separate user message log, uncomment and ensure practiceChatLog exists.
+            // practiceChatLog.appendChild(messageDiv);
+            // practiceChatLog.scrollTop = practiceChatLog.scrollHeight; 
+            console.log(`User message logged: ${text}`); // Log for debugging
+        }
+
+        /**
+         * Updates the status message below the practice input.
+         * @param {string} type - Message type ('success-text', 'error-text', 'info-text').
+         * @param {string} message - The message content.
+         */
+        function updatePracticeStatus(type, message) {
+            practiceStatusMessage.className = `status-message text-center mt-2 text-sm font-medium`;
+            practiceStatusMessage.innerHTML = message;
+            if (type === 'success-text') practiceStatusMessage.classList.add('text-success_green');
+            else if (type === 'error-text') practiceStatusMessage.classList.add('text-error_red');
+            else if (type === 'info-text') practiceStatusMessage.classList.add('text-yellow-600'); 
+            else practiceStatusMessage.classList.add('text-text_secondary'); 
+        }
+
+        /**
+         * Updates the user status text in the header.
+         * @param {string} message - The message to display.
+         * @param {string} colorClass - Tailwind color class for the text.
+         */
+        function updateUserStatusDisplay(message, colorClass = 'text-text_secondary') {
+            userStatusDisplay.textContent = message;
+            userStatusDisplay.className = `text-xs ${colorClass}`; 
+        }
+
+        /** Initializes Firebase App and Auth. */
+        async function initializeFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                console.log("Firebase App và Auth đã khởi tạo!");
+                updateUserStatusDisplay("Đang kiểm tra đăng nhập...");
+                
+                // Initialize speechRate and its display after DOM is loaded
+                if (rateSlider && rateValueSpan) {
+                    speechRate = parseFloat(rateSlider.value); 
+                    rateValueSpan.textContent = speechRate.toFixed(1); 
+                }
+
+                // Populate voices for TTS when they are loaded
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+                populateVoiceList(); 
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        console.log("Người dùng đã đăng nhập:", user.email);
+                        updateUserStatusDisplay("Đã đăng nhập.", 'text-success_green');
+                        authSection.classList.add('hidden'); 
+                        mainLearningContent.classList.remove('hidden'); 
+                        initializeGeminiModel(); 
+                        displayCurrentVocab(); 
+                        // Display initial greeting from Gemini in aiResponseDisplay area
+                        displayAiResponse(practiceChatHistory[0].parts[0].text);
+                    } else {
+                        console.log("Người dùng đã đăng xuất.");
+                        updateUserStatusDisplay("Vui lòng đăng nhập.", 'text-text_secondary');
+                        authSection.classList.remove('hidden'); 
+                        mainLearningContent.classList.add('hidden'); 
+                        if (model) { 
+                            model = null; 
+                            updatePracticeStatus('info-text', 'Mô hình AI đã ngắt kết nối. Vui lòng đăng nhập lại.');
+                        }
+                        sendPracticeButton.disabled = true;
+                        practiceMicrophoneButton.disabled = true; 
+                        quickLearnBtns.forEach(btn => btn.disabled = true); 
+                        saveWordButton.disabled = true; // Disable save button
+                        practiceInput.value = "";
+                        // If practiceChatLog is still defined, clear it
+                        // Removed practiceChatLog.innerHTML, as practiceChatLog is global and its usage has been commented out.
+                        practiceChatHistory = [ // Reset history on logout
+                            { role: "model", parts: [{ text: `Chào bạn! Tôi là trợ lý giáo viên tiếng Trung thân thiện và chuyên nghiệp. Nhiệm vụ của bạn là giúp người học tiếng Trung bằng cách giải thích từ vựng, ngữ pháp, cung cấp ví dụ, trả lời câu hỏi và đưa ra các bài tập nhỏ. Luôn trả lời bằng tiếng Việt, nhưng hãy cung cấp Hán tự và pinyin khi đề cập đến từ/cụm từ tiếng Trung. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!` }] }
+                        ]; 
+                        displayAiResponse(practiceChatHistory[0].parts[0].text); // Show initial greeting on logout
+                    }
+                });
+
+            } catch (e) {
+                console.error("Lỗi khi khởi tạo Firebase:", e);
+                authErrorMessage.textContent = `Lỗi khởi tạo Firebase: ${e.message}. Vui lòng kiểm tra Console (F12).`;
+                authSection.classList.remove('hidden');
+                mainLearningContent.classList.add('hidden');
+            }
+        }
+
+        /** Initializes Gemini Model. */
+        async function initializeGeminiModel() {
+            try {
+                updateUserStatusDisplay("Đang khởi tạo AI Model...", 'text-yellow-600'); 
+                const ai = getAI(app, { backend: new GoogleAIBackend() });
+                model = getGenerativeModel(ai, { model: "gemini-1.5-flash-latest" });
+                console.log("Generative Model instance created!");
+                updateUserStatusDisplay("AI đã sẵn sàng.", 'text-success_green');
+                
+                sendPracticeButton.disabled = false;
+                practiceMicrophoneButton.disabled = false; 
+                quickLearnBtns.forEach(btn => btn.disabled = false); 
+                saveWordButton.disabled = false; // Enable save button
+            } catch (e) {
+                console.error("Error initializing AI Model:", e);
+                updateUserStatusDisplay("Lỗi khởi tạo AI.", 'text-error_red');
+                updatePracticeStatus('error-text', `Lỗi khởi tạo AI Model: ${e.message}.<br>Đảm bảo Gemini API đã được kích hoạt cho dự án của bạn.`);
+                sendPracticeButton.disabled = true;
+                practiceMicrophoneButton.disabled = true;
+                quickLearnBtns.forEach(btn => btn.disabled = true);
+                saveWordButton.disabled = true; // Disable save button
+            }
+        }
+
+        // --- Auth Functions ---
+        async function handleSignUp() {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            authErrorMessage.textContent = ''; 
+
+            if (!email || !password) {
+                authErrorMessage.textContent = "Vui lòng nhập email và mật khẩu.";
+                return;
+            }
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                console.log("Đăng ký thành công!");
+            }
+            catch (error) {
+                console.error("Lỗi đăng ký:", error.message);
+                let displayMessage = "Đăng ký thất bại.";
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        displayMessage = "Email này đã được sử dụng.";
+                        break;
+                    case 'auth/invalid-email':
+                        displayMessage = "Địa chỉ email không hợp lệ.";
+                        break;
+                    case 'auth/weak-password':
+                        displayMessage = "Mật khẩu quá yếu (ít nhất 6 ký tự).";
+                        break;
+                    default:
+                        displayMessage = `Đăng ký thất bại: ${error.message}`;
+                }
+                authErrorMessage.textContent = `${displayMessage} (${error.code})`;
+            }
+        }
+
+        async function handleSignIn() {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            authErrorMessage.textContent = ''; 
+
+            if (!email || !password) {
+                authErrorMessage.textContent = "Vui lòng nhập email và mật khẩu.";
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                console.log("Đăng nhập thành công!");
+            } 
+            catch (error) {
+                console.error("Lỗi đăng nhập:", error.message);
+                let displayMessage = "Đăng nhập thất bại.";
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        displayMessage = "Sai email hoặc mật khẩu.";
+                        break;
+                    case 'auth/invalid-email':
+                        displayMessage = "Địa chỉ email không hợp lệ.";
+                        break;
+                    default:
+                        displayMessage = `Đăng nhập thất bại: ${error.message}`;
+                }
+                authErrorMessage.textContent = `${displayMessage} (${error.code})`;
+            }
+        }
+
+        async function handleSignOut() {
+            try {
+                await signOut(auth);
+                console.log("Đăng xuất thành công!");
+            } catch (error) {
+                console.error("Lỗi đăng xuất:", error.message);
+                showCustomMessageBox(`Lỗi đăng xuất: ${error.message}`);
+            }
+        }
+
+        // --- Lesson Section Functions ---
+        function displayCurrentVocab() {
+            if (lessonVocabulary.length === 0) {
+                chineseChar.textContent = "Không có từ vựng.";
+                pinyin.textContent = "";
+                vietnameseMeaning.textContent = "";
+                vocabCounter.textContent = "0/0";
+                return;
+            }
+            const currentItem = lessonVocabulary[currentVocabIndex];
+            chineseChar.textContent = currentItem.chinese;
+            pinyin.textContent = currentItem.pinyin;
+            vietnameseMeaning.textContent = currentItem.vietnamese;
+            vocabCounter.textContent = `${currentVocabIndex + 1}/${lessonVocabulary.length}`;
+
+            prevVocabButton.disabled = currentVocabIndex === 0;
+            nextVocabButton.disabled = currentVocabIndex === lessonVocabulary.length - 1;
+            
+            pronounceButton.disabled = false; 
+        }
+
+        // --- My Vocabulary Functions (Local Storage MVP) ---
+        function saveCurrentWord() {
+            const currentItem = lessonVocabulary[currentVocabIndex];
+            if (!currentItem) return;
+
+            // Check if word already exists in saved list
+            const exists = mySavedVocabulary.some(word => word.id === currentItem.id);
+            if (exists) {
+                showCustomMessageBox(`"${currentItem.chinese}" đã có trong Từ Vựng Của Bạn.`);
+                return;
+            }
+
+            mySavedVocabulary.push(currentItem);
+            localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary));
+            showCustomMessageBox(`Đã lưu "${currentItem.chinese}" vào Từ Vựng Của Bạn!`);
+            displayMyVocabulary(); // Refresh list in modal if open
+        }
+
+        function displayMyVocabulary() {
+            myVocabList.innerHTML = ''; // Clear current list
+            if (mySavedVocabulary.length === 0) {
+                myVocabList.innerHTML = '<p class="text-text_secondary text-sm text-center">Chưa có từ vựng nào được lưu.</p>';
+                return;
+            }
+
+            mySavedVocabulary.forEach((word, index) => {
+                const vocabItemDiv = document.createElement('div');
+                vocabItemDiv.className = 'my-vocab-item';
+                vocabItemDiv.innerHTML = `
+                    <span>${word.chinese} (${word.pinyin}) - ${word.vietnamese}</span>
+                    <button class="delete-btn btn-animation" data-index="${index}">Xóa</button>
+                `;
+                vocabItemDiv.querySelector('.delete-btn').addEventListener('click', (event) => {
+                    const idxToDelete = parseInt(event.target.dataset.index);
+                    deleteSavedWord(idxToDelete);
+                });
+                myVocabList.appendChild(vocabItemDiv);
+            });
+        }
+
+        function deleteSavedWord(index) {
+            mySavedVocabulary.splice(index, 1); // Remove from array
+            localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary)); // Update local storage
+            displayMyVocabulary(); // Refresh the displayed list
+            showCustomMessageBox("Đã xóa từ vựng.");
+        }
+
+
+        // --- TTS Functions (for settings modal) ---
+        function populateVoiceList() {
+            if (!('speechSynthesis' in window)) return;
+
+            const voices = speechSynthesis.getVoices();
+            voiceSelect.innerHTML = ''; 
+
+            const filteredVoices = voices.filter(voice => voice.lang.startsWith('zh') || voice.lang.startsWith('vi')); 
+
+            if (filteredVoices.length === 0) {
+                const option = document.createElement('option');
+                option.textContent = "Không có giọng đọc";
+                option.value = "";
+                voiceSelect.appendChild(option);
+                voiceSelect.disabled = true;
+                console.warn("No suitable voices found for TTS.");
+            } else {
+                filteredVoices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.value = voice.name; 
+                    voiceSelect.appendChild(option);
+
+                    if (voice.default || (index === 0 && selectedVoice === null && voice.lang.startsWith('zh'))) {
+                        voiceSelect.value = voice.name;
+                        selectedVoice = voice;
+                    }
+                });
+                voiceSelect.disabled = false;
+                if (selectedVoice && filteredVoices.some(v => v.name === selectedVoice.name)) {
+                     voiceSelect.value = selectedVoice.name;
+                } else if (filteredVoices.length > 0 && !selectedVoice) {
+                    selectedVoice = filteredVoices[0];
+                    voiceSelect.value = filteredVoices[0].name;
+                }
+            }
+            console.log("Voices populated. Selected voice for TTS:", selectedVoice ? selectedVoice.name : "None");
+        }
+
+        /**
+         * Speaks the provided text.
+         * @param {string} text - The text to speak.
+         * @param {string} lang - Optional language to force (e.g., 'zh-CN', 'vi-VN').
+         */
+        function speakChinese(text, lang = 'zh-CN') { // Default to Chinese
+            if (!('speechSynthesis' in window)) {
+                showCustomMessageBox("Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (Speech Synthesis).");
+                return;
+            }
+
+            if (!selectedVoice || !selectedVoice.lang.startsWith(lang)) {
+                const voices = speechSynthesis.getVoices();
+                let specificVoice = voices.find(voice => voice.lang.startsWith(lang));
+                if (specificVoice) {
+                    selectedVoice = specificVoice;
+                } else {
+                    showCustomMessageBox(`Không tìm thấy giọng đọc tiếng ${lang.startsWith('zh') ? 'Trung' : 'Việt'} nào. Vui lòng kiểm tra cài đặt TTS của trình duyệt.`);
+                    return;
+                }
+            }
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = selectedVoice;
+            utterance.lang = lang; 
+            utterance.pitch = 1;     
+            utterance.rate = speechRate;    
+            speechSynthesis.speak(utterance);
+        }
+
+        /** Displays a custom modal message. */
+        function showCustomMessageBox(message) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            messageBox.innerHTML = `
+                <div class="bg-card_bg p-8 rounded-lg shadow-lg max-w-sm w-full text-center">
+                    <p class="text-text_dark mb-4">${message}</p>
+                    <button onclick="this.closest('.fixed').remove()" class="bg-primary_blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded btn-animation">Đóng</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+        }
+
+        // --- Speech-to-Text (STT) Functions ---
+        function initializeSpeechRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                practiceMicrophoneButton.disabled = true;
+                console.warn("Speech Recognition not supported in this browser.");
+                showCustomMessageBox("Tính năng nhận diện giọng nói không được hỗ trợ trên trình duyệt này.");
+                return null; 
+            }
+
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = false; 
+            recognition.interimResults = false; 
+            recognition.lang = 'vi-VN'; 
+
+            recognition.onstart = () => {
+                isListening = true;
+                practiceMicrophoneButton.classList.add('text-red-500'); 
+                updatePracticeStatus('info-text', 'Đang nghe bạn nói...');
+                practiceInput.placeholder = 'Đang nghe...';
+                practiceInput.value = '';
+                finalTranscript = '';
+                sendPracticeButton.disabled = true; 
+                practiceInput.disabled = true; 
+                quickLearnBtns.forEach(btn => btn.disabled = true);
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+                practiceInput.value = finalTranscript || interimTranscript;
+            };
+
+            recognition.onerror = (event) => {
+                isListening = false;
+                practiceMicrophoneButton.classList.remove('text-red-500');
+                updatePracticeStatus('error-text', `Lỗi nhận diện giọng nói: ${event.error}`);
+                console.error('Speech recognition error:', event.error);
+                practiceInput.placeholder = 'Hỏi AI hoặc trả lời bài tập...';
+                sendPracticeButton.disabled = false; 
+                practiceInput.disabled = false;
+                quickLearnBtns.forEach(btn => btn.disabled = false);
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                practiceMicrophoneButton.classList.remove('text-red-500');
+                updatePracticeStatus('info-text', 'Đã kết thúc nhận diện giọng nói.');
+                practiceInput.placeholder = 'Hỏi AI hoặc trả lời bài tập...';
+                
+                if (finalTranscript) {
+                    practiceInput.value = finalTranscript;
+                    handleSendPracticeMessage(finalTranscript); 
+                } else {
+                    updatePracticeStatus('info-text', 'Không nhận diện được giọng nói. Vui lòng thử lại.');
+                }
+                sendPracticeButton.disabled = false; 
+                practiceInput.disabled = false;
+                quickLearnBtns.forEach(btn => btn.disabled = false);
+            };
+
+            return recognition; 
+        }
+
+        function toggleListening() {
+            if (!recognition) {
+                recognition = initializeSpeechRecognition(); 
+                if (!recognition) return; 
+            }
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                const currentVocab = lessonVocabulary[currentVocabIndex];
+                const lastClickedPromptType = document.activeElement.dataset.promptType;
+                
+                if (lastClickedPromptType === 'pronunciation_practice' || (currentVocab && practiceInput.value.includes("Luyện nói:"))) { 
+                    recognition.lang = 'zh-CN'; 
+                    updatePracticeStatus('info-text', `Hãy nói tiếng Trung...`);
+                } else {
+                    recognition.lang = 'vi-VN'; 
+                    updatePracticeStatus('info-text', 'Hãy nói câu hỏi của bạn bằng tiếng Việt...');
+                }
+                recognition.start();
+            }
+        }
+
+        // --- Practice Section Functions (Interaction with Gemini) ---
+        async function handleSendPracticeMessage(message) {
+            if (!model) {
+                updatePracticeStatus('error-text', "Mô hình AI chưa được khởi tạo. Vui lòng đăng nhập.");
+                return;
+            }
+
+            const userMessage = message.trim();
+            if (!userMessage) {
+                updatePracticeStatus('error-text', "Vui lòng nhập tin nhắn hoặc chọn gợi ý!");
+                return;
+            }
+
+            // Add user message to the practice chat log (for user's reference)
+            addPracticeChatMessage(userMessage, 'user-msg'); 
+            
+            // Add user message to AI's internal history for context
+            practiceChatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            practiceInput.value = ''; 
+
+            updatePracticeStatus('info-text', "Đang gửi yêu cầu đến Gemini...");
+            displayAiResponse('', true); // Show spinner in AI response area
+
+            sendPracticeButton.disabled = true;
+            sendPracticeIcon.classList.add('hidden'); 
+            sendPracticeButtonSpinner.classList.remove('hidden'); 
+            practiceInput.disabled = true; 
+            practiceMicrophoneButton.disabled = true; 
+            quickLearnBtns.forEach(btn => btn.disabled = true);
+
+            try {
+                const currentVocab = lessonVocabulary[currentVocabIndex];
+                let promptForGemini = userMessage; 
+
+                const clickedButton = document.activeElement; 
+                const promptType = clickedButton.dataset ? clickedButton.dataset.promptType : null; 
+
+                if (promptType) { 
+                    if (promptType === 'explain_vocab') {
+                        promptForGemini = `Giải thích chi tiết từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}).`;
+                    } else if (promptType === 'example_sentence') {
+                        promptForGemini = `Tạo 3 câu ví dụ khác nhau sử dụng từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}), mỗi ví dụ kèm pinyin và nghĩa tiếng Việt.`;
+                    } else if (promptType === 'quiz_question') {
+                        promptForGemini = `Đặt một câu hỏi trắc nghiệm hoặc điền vào chỗ trống về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}). Cung cấp đáp án đúng và giải thích ngắn gọn.`;
+                    } else if (promptType === 'pronunciation_practice') {
+                        promptForGemini = `Người học đã nói "${userMessage}" (từ đang học là "${currentVocab.chinese}"). Bạn là giáo viên phát âm tiếng Trung, hãy đánh giá phát âm này. Chỉ ra lỗi sai (thanh điệu, pinyin, ngữ điệu) và đưa ra gợi ý sửa cụ thể. Nếu phát âm tốt, hãy khen ngợi. Luôn trả lời bằng tiếng Việt.`;
+                    }
+                } else {
+                    if (practiceChatHistory.length > 1) {
+                         const lastGeminiMessage = practiceChatHistory[practiceChatHistory.length -1].parts[0].text;
+                         if (lastGeminiMessage.includes("Câu hỏi ôn tập") || lastGeminiMessage.includes("Hãy nói")) {
+                             promptForGemini = `Câu trả lời của người học cho câu hỏi/bài tập trước là: "${userMessage}". Vui lòng đánh giá và đưa ra phản hồi.`;
+                         }
+                    }
+                }
+
+                // Append the user's current effective prompt to the history sent to Gemini
+                // We are now sending a snapshot of the current history including the newly added user prompt
+                // The persona is already part of practiceChatHistory[0]
+                const conversationContext = [
+                    ...practiceChatHistory.slice(0, practiceChatHistory.length) // All messages up to now
+                ];
+
+                const result = await model.generateContent({ contents: conversationContext });
+                const response = result.response;
+                const text = response.text();
+
+                displayAiResponse(text); // Display Gemini's response in AI response area
+                practiceChatHistory.push({ role: "model", parts: [{ text: text }] }); // Add AI's response to history for context
+
+                updatePracticeStatus('success-text', "Đã nhận phản hồi từ Gemini.");
+                console.log("Gemini Response:", text);
+
+            } catch (error) {
+                console.error("Lỗi khi gọi Gemini API:", error);
+                displayAiResponse(`Lỗi: ${error.message}. Vui lòng thử lại.`); // Display error in AI response area
+                updatePracticeStatus('error-text', `Lỗi khi gọi Gemini API: ${error.message}.`);
+            } finally {
+                sendPracticeButton.disabled = false;
+                sendPracticeIcon.classList.remove('hidden'); 
+                sendPracticeButtonSpinner.classList.add('hidden'); 
+                practiceInput.disabled = false;
+                practiceMicrophoneButton.disabled = false; 
+                quickLearnBtns.forEach(btn => btn.disabled = false);
+                practiceInput.focus(); 
+            }
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize speechRate from slider value after DOM is ready
+            if (rateSlider && rateValueSpan) {
+                speechRate = parseFloat(rateSlider.value); 
+                rateValueSpan.textContent = speechRate.toFixed(1); 
+            }
+            
+            // Attach all event listeners here, after elements are assigned
+            if (signInButton) signInButton.addEventListener('click', handleSignIn);
+            if (signUpButton) signUpButton.addEventListener('click', handleSignUp);
+            if (signOutButtonSmall) signOutButtonSmall.addEventListener('click', handleSignOut); 
+
+            if (sendPracticeButton) sendPracticeButton.addEventListener('click', () => handleSendPracticeMessage(practiceInput.value));
+            if (practiceInput) practiceInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) { 
+                    event.preventDefault(); 
+                    handleSendPracticeMessage(practiceInput.value);
+                }
+            });
+
+            quickLearnBtns.forEach(button => {
+                button.addEventListener('click', (event) => { 
+                    const promptType = event.currentTarget.dataset.promptType; 
+                    const currentVocab = lessonVocabulary[currentVocabIndex]; 
+                    let promptToSend = "";
+
+                    if (!currentVocab) {
+                        updatePracticeStatus('error-text', 'Không có từ vựng để luyện tập.');
+                        return;
+                    }
+                    
+                    if (promptType === 'pronunciation_practice') {
+                        updatePracticeStatus('info-text', `Hãy nói "${currentVocab.chinese}" vào micro để luyện phát âm!`);
+                        practiceInput.value = `Luyện nói: ${currentVocab.chinese}`; 
+                        toggleListening(); 
+                        return; 
+                    }
+                    
+                    if (promptType === 'explain_vocab') {
+                        promptToSend = `Giải thích từ vựng "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}).`;
+                    } else if (promptType === 'example_sentence') {
+                        promptToSend = `Tạo một câu ví dụ khác với từ "${currentVocab.chinese}" (${currentVocab.pinyin}) và dịch sang tiếng Việt.`;
+                    } else if (promptType === 'quiz_question') {
+                        promptToSend = `Đặt một câu hỏi ôn tập (ví dụ: trắc nghiệm, điền từ) về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}) cho người mới học. Cung cấp đáp án và giải thích ngắn gọn.`;
+                    }
+                    
+                    handleSendPracticeMessage(promptToSend);
+                });
+            });
+
+            if (pronounceButton) pronounceButton.addEventListener('click', () => {
+                const currentItem = lessonVocabulary[currentVocabIndex];
+                if (currentItem) {
+                    speakChinese(currentItem.chinese);
+                }
+            });
+            if (prevVocabButton) prevVocabButton.addEventListener('click', () => {
+                if (currentVocabIndex > 0) {
+                    currentVocabIndex--;
+                    displayCurrentVocab();
+                }
+            });
+            if (nextVocabButton) nextVocabButton.addEventListener('click', () => {
+                if (currentVocabIndex < lessonVocabulary.length - 1) {
+                    currentVocabIndex++;
+                    displayCurrentVocab();
+                }
+            });
+
+            // New: Save Word Button Listener
+            if (saveWordButton) saveWordButton.addEventListener('click', saveCurrentWord);
+
+            // Settings Modal handlers
+            if (openSettingsButton) openSettingsButton.addEventListener('click', () => {
+                settingsModal.classList.remove('hidden');
+                populateVoiceList(); 
+                if (rateValueSpan && rateSlider) {
+                    rateValueSpan.textContent = speechRate.toFixed(1); 
+                    rateSlider.value = speechRate; 
+                }
+            });
+            if (closeSettingsButton) closeSettingsButton.addEventListener('click', () => {
+                settingsModal.classList.add('hidden');
+            });
+            if (voiceSelect) voiceSelect.addEventListener('change', (event) => {
+                const selectedVoiceName = event.target.value;
+                const voices = speechSynthesis.getVoices();
+                selectedVoice = voices.find(voice => voice.name === selectedVoiceName);
+            });
+            if (rateSlider) rateSlider.addEventListener('input', (event) => {
+                speechRate = parseFloat(event.target.value);
+                rateValueSpan.textContent = speechRate.toFixed(1); 
+            });
+
+            // My Vocabulary Modal handlers
+            if (openMyVocabButton) openMyVocabButton.addEventListener('click', () => {
+                myVocabModal.classList.remove('hidden');
+                displayMyVocabulary(); // Show saved words when modal opens
+            });
+            if (closeMyVocabButton) closeMyVocabButton.addEventListener('click', () => {
+                myVocabModal.classList.add('hidden');
+            });
+
+            if (practiceMicrophoneButton) practiceMicrophoneButton.addEventListener('click', toggleListening);
+
+            initializeFirebase(); // Call initializeFirebase after all elements are assigned and listeners attached
+        });
+
+    </script>
+</body>
+</html>
