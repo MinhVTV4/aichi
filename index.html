@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-M-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ứng dụng Học Tiếng Trung</title>
     <!-- Tailwind CSS CDN for styling -->
@@ -14,21 +14,20 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        // Bảng màu được tinh chỉnh cho sự hài hòa và hiện đại
-                        app_background: '#F8F9FA', // Nền tổng thể của ứng dụng
-                        header_bg: '#FFFFFF',      // Nền header
-                        lesson_bg: '#F0F9FF',      // Nền phần bài học (xanh nhạt)
-                        practice_bg: '#F5F3FF',    // Nền phần luyện tập (tím nhạt)
-                        card_bg: '#FFFFFF',        // Nền các thẻ/khối nội dung
-                        input_field_bg: '#EBEBEB', // Nền các ô nhập liệu
-                        icon_color_primary: '#4A5568', // Màu icon chính
-                        send_button_bg: '#3B82F6',   // Màu nút gửi (xanh chính)
-                        text_dark: '#1A202C',       // Màu chữ đậm chính
-                        text_secondary: '#718096',  // Màu chữ phụ
-                        primary_blue: '#3B82F6',    // Màu xanh dương chính
-                        border_light: '#E2E8F0',     // Màu viền nhạt
-                        error_red: '#EF4444',       // Màu đỏ cho lỗi
-                        success_green: '#22C55E',   // Màu xanh lá cho thành công
+                        app_background: '#F8F9FA', 
+                        header_bg: '#FFFFFF',
+                        lesson_bg: '#F0F9FF',      /* Light blue for lesson section */
+                        practice_bg: '#F5F3FF',    /* Light purple for practice section */
+                        card_bg: '#FFFFFF',
+                        input_field_bg: '#EBEBEB',
+                        icon_color_primary: '#4A5568',
+                        send_button_bg: '#3B82F6',   /* Primary blue */
+                        text_dark: '#1A202C',
+                        text_secondary: '#718096',
+                        primary_blue: '#3B82F6',
+                        border_light: '#E2E8F0',
+                        error_red: '#EF4444',
+                        success_green: '#22C55E',
                         orange_accent: '#FF8C00',   // Màu cam nhấn cho "Lưu từ"
                     }
                 }
@@ -50,14 +49,14 @@
         }
         #appContainer {
             width: 100%;
-            max-width: 420px; /* Chiều rộng tối đa giống smartphone */
-            height: 100vh;    /* Chiều cao đầy đủ màn hình */
+            max-width: 420px; 
+            height: 100vh; 
             display: flex;
             flex-direction: column;
             background-color: white; 
-            border-radius: 1.5rem; /* Bo tròn các góc khung ứng dụng */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Bóng đổ mềm mại hơn */
-            overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài góc bo */
+            border-radius: 1.5rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            overflow: hidden; 
         }
 
         /* Spinner styles */
@@ -70,7 +69,7 @@
             animation: spin 1s linear infinite;
         }
         .large-spinner {
-            border: 4px solid rgba(59, 130, 246, 0.3); /* Dùng màu xanh chính */
+            border: 4px solid rgba(59, 130, 246, 0.3); 
             border-left-color: #3B82F6; 
             border-radius: 50%;
             width: 30px;
@@ -95,13 +94,13 @@
 
         /* Core content area styling */
         #mainContentArea {
-            flex-grow: 1; /* Cho phép nó mở rộng lấp đầy không gian */
-            overflow-y: auto; /* Cuộn nếu nội dung dài */
+            flex-grow: 1; 
+            overflow-y: auto;
             background-color: var(--tw-colors-app_background);
-            padding: 1rem; /* Padding đồng nhất */
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem; /* Khoảng cách giữa các section (bài học, luyện tập) */
+            gap: 1.5rem;
         }
 
         /* Lesson section styling */
@@ -109,7 +108,7 @@
             background-color: var(--tw-colors-lesson_bg);
             padding: 1.5rem;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Bóng đổ nhẹ nhàng */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             text-align: center;
         }
         .lesson-vocab-display {
@@ -225,6 +224,19 @@
             height: 14px;
             color: white;
         }
+        /* NEW: Styling for clickable Chinese words within markdown output */
+        .clickable-chinese {
+            cursor: pointer;
+            color: var(--tw-colors-primary_blue);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+            transition: color 0.2s ease;
+        }
+        .clickable-chinese:hover {
+            color: #2563EB; /* Darker blue on hover */
+        }
+
 
         /* Markdown Styling */
         .markdown-body {
@@ -469,7 +481,7 @@
                         </button>
                     </div>
 
-                    <!-- User input log in practice section -->
+                    <!-- User input log in practice section (visible but not taking AI responses) -->
                     <div id="practiceChatLog" class="bg-input_field_bg p-3 rounded-lg max-h-[150px] overflow-y-auto mt-3 hidden">
                         <!-- User's questions will be added here -->
                     </div>
@@ -642,25 +654,77 @@
             } else {
                 aiResponseDisplay.classList.remove('loading');
                 const parsedHtml = marked.parse(text); // Parse Markdown content
-                aiResponseDisplay.innerHTML = `<div class="markdown-body">${parsedHtml}</div>`;
+                
+                // Temporary div to hold the parsed HTML and then process it
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = parsedHtml;
 
-                // Add inline pronounce button if Chinese characters are present
-                const chineseRegex = /[\u4E00-\u9FFF\u3000-\u303F\uFF00-\uFFEF\u2000-\u206F\u2E00-\u2E7F\s]+/g; // Includes CJK, CJK punctuation, full-width, general punctuation, spaces
-                const pureChineseCharRegex = /[\u4E00-\u9FFF]/; // To check if actual Chinese characters exist
+                // Regex to find Chinese characters within text nodes
+                // Corrected regex for clickable Chinese words to only match Chinese characters for better clickability
+                const chineseWordRegex = /([\u4E00-\u9FFF]+)/g; 
+                const pureChineseCharRegex = /[\u4E00-\u9FFF]/; 
 
-                const chineseSegments = text.match(chineseRegex) || [];
-                const chineseTextToSpeak = chineseSegments.filter(segment => pureChineseCharRegex.test(segment)).join(' ');
+                // Function to recursively process text nodes
+                function processNode(node) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const originalText = node.nodeValue;
+                        if (originalText.match(chineseWordRegex)) {
+                            const fragment = document.createDocumentFragment();
+                            let lastIndex = 0;
+                            originalText.replace(chineseWordRegex, (match, chinesePart, offset) => {
+                                // Add text before the Chinese part
+                                if (offset > lastIndex) {
+                                    fragment.appendChild(document.createTextNode(originalText.substring(lastIndex, offset)));
+                                }
+                                // Create clickable span for the Chinese part
+                                const span = document.createElement('span');
+                                span.className = 'clickable-chinese';
+                                span.textContent = chinesePart;
+                                span.dataset.pronounceText = chinesePart; // Store the exact part to speak
+                                span.addEventListener('click', (e) => {
+                                    e.stopPropagation(); // Prevent bubbling up to parent elements
+                                    speakChinese(span.dataset.pronounceText, 'zh-CN');
+                                });
+                                fragment.appendChild(span);
+                                lastIndex = offset + match.length;
+                                return match; // Keep original match for replace
+                            });
+                            // Add any remaining text
+                            if (lastIndex < originalText.length) {
+                                fragment.appendChild(document.createTextNode(originalText.substring(lastIndex)));
+                            }
+                            node.parentNode.replaceChild(fragment, node);
+                        }
+                    } else {
+                        // Avoid processing inside code blocks or pre tags
+                        if (node.tagName !== 'CODE' && node.tagName !== 'PRE') {
+                            for (let i = 0; i < node.childNodes.length; i++) {
+                                processNode(node.childNodes[i]);
+                            }
+                        }
+                    }
+                }
+                
+                processNode(tempDiv); // Start processing from the temporary div
 
-                if (pureChineseCharRegex.test(text)) { 
+                aiResponseDisplay.appendChild(tempDiv); // Append the processed content
+
+                // Add overall inline pronounce button if any Chinese character exists in the original text
+                // Use a broader regex here to capture all Chinese content, including punctuation and spaces for natural reading
+                const fullChineseContentRegex = /[\u4E00-\u9FFF\u3000-\u303F\uFF00-\uFFEF\u2000-\u206F\u2E00-\u2E7F\s]+/g; 
+                
+                if (pureChineseCharRegex.test(text)) { // Check if the original text contains any Chinese characters
                     const pronounceBtn = document.createElement('button');
                     pronounceBtn.className = 'pronounce-inline-btn btn-animation';
                     pronounceBtn.innerHTML = `
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l.293-.293A1 1 0 017 8h5l4.586 4.586a2 2 0 01.293.293M2 12h2"></path></svg>
                         Nghe đọc tiếng Trung
                     `;
+                    // Extract all Chinese text segments for the overall button
+                    const chineseTextSegmentsForOverallBtn = (text.match(fullChineseContentRegex) || []).join(' ');
                     pronounceBtn.addEventListener('click', () => {
-                        if (chineseTextToSpeak.trim()) {
-                            speakChinese(chineseTextToSpeak.trim(), 'zh-CN');
+                        if (chineseTextSegmentsForOverallBtn.trim()) {
+                            speakChinese(chineseTextSegmentsForOverallBtn.trim(), 'zh-CN');
                         } else {
                             showCustomMessageBox("Không tìm thấy tiếng Trung để đọc trong tin nhắn này.");
                         }
@@ -681,11 +745,9 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `practice-chat-message ${sender}`;
             messageDiv.innerText = text;
-            // Removed practiceChatLog, this function is now effectively unused or needs to be adapted.
-            // If you intend to have a separate user message log, uncomment and ensure practiceChatLog exists.
-            // practiceChatLog.appendChild(messageDiv);
-            // practiceChatLog.scrollTop = practiceChatLog.scrollHeight; 
-            console.log(`User message logged: ${text}`); // Log for debugging
+            practiceChatLog.appendChild(messageDiv);
+            practiceChatLog.scrollTop = practiceChatLog.scrollHeight; 
+            practiceChatLog.classList.remove('hidden'); // Ensure log is visible
         }
 
         /**
@@ -752,10 +814,10 @@
                         sendPracticeButton.disabled = true;
                         practiceMicrophoneButton.disabled = true; 
                         quickLearnBtns.forEach(btn => btn.disabled = true); 
-                        saveWordButton.disabled = true; // Disable save button
+                        saveWordButton.disabled = true; 
                         practiceInput.value = "";
-                        // If practiceChatLog is still defined, clear it
-                        // Removed practiceChatLog.innerHTML, as practiceChatLog is global and its usage has been commented out.
+                        practiceChatLog.innerHTML = ''; 
+                        practiceChatLog.classList.add('hidden'); // Hide chat log on logout
                         practiceChatHistory = [ // Reset history on logout
                             { role: "model", parts: [{ text: `Chào bạn! Tôi là trợ lý giáo viên tiếng Trung thân thiện và chuyên nghiệp. Nhiệm vụ của bạn là giúp người học tiếng Trung bằng cách giải thích từ vựng, ngữ pháp, cung cấp ví dụ, trả lời câu hỏi và đưa ra các bài tập nhỏ. Luôn trả lời bằng tiếng Việt, nhưng hãy cung cấp Hán tự và pinyin khi đề cập đến từ/cụm từ tiếng Trung. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!` }] }
                         ]; 
@@ -776,14 +838,14 @@
             try {
                 updateUserStatusDisplay("Đang khởi tạo AI Model...", 'text-yellow-600'); 
                 const ai = getAI(app, { backend: new GoogleAIBackend() });
-                model = getGenerativeModel(ai, { model: "gemini-1.5-flash-latest" });
+                model = getGenerativeModel(ai, { model: "gemini-2.5-flash" }); // Changed to gemini-2.5-flash
                 console.log("Generative Model instance created!");
                 updateUserStatusDisplay("AI đã sẵn sàng.", 'text-success_green');
                 
                 sendPracticeButton.disabled = false;
                 practiceMicrophoneButton.disabled = false; 
                 quickLearnBtns.forEach(btn => btn.disabled = false); 
-                saveWordButton.disabled = false; // Enable save button
+                saveWordButton.disabled = false; 
             } catch (e) {
                 console.error("Error initializing AI Model:", e);
                 updateUserStatusDisplay("Lỗi khởi tạo AI.", 'text-error_red');
@@ -791,7 +853,7 @@
                 sendPracticeButton.disabled = true;
                 practiceMicrophoneButton.disabled = true;
                 quickLearnBtns.forEach(btn => btn.disabled = true);
-                saveWordButton.disabled = true; // Disable save button
+                saveWordButton.disabled = true; 
             }
         }
 
@@ -1128,11 +1190,7 @@
                 return;
             }
 
-            // Add user message to the practice chat log (for user's reference)
-            addPracticeChatMessage(userMessage, 'user-msg'); 
-            
-            // Add user message to AI's internal history for context
-            practiceChatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            addPracticeChatMessage(userMessage, 'user-msg'); // User message goes to chat log
             practiceInput.value = ''; 
 
             updatePracticeStatus('info-text', "Đang gửi yêu cầu đến Gemini...");
@@ -1172,10 +1230,12 @@
                 }
 
                 // Append the user's current effective prompt to the history sent to Gemini
-                // We are now sending a snapshot of the current history including the newly added user prompt
-                // The persona is already part of practiceChatHistory[0]
+                practiceChatHistory.push({ role: "user", parts: [{ text: promptForGemini }] });
+
+                // Construct the final contents to send for generation
+                // The first message in practiceChatHistory now holds the full persona prompt
                 const conversationContext = [
-                    ...practiceChatHistory.slice(0, practiceChatHistory.length) // All messages up to now
+                    ...practiceChatHistory.slice(0, practiceChatHistory.length) 
                 ];
 
                 const result = await model.generateContent({ contents: conversationContext });
@@ -1183,7 +1243,7 @@
                 const text = response.text();
 
                 displayAiResponse(text); // Display Gemini's response in AI response area
-                practiceChatHistory.push({ role: "model", parts: [{ text: text }] }); // Add AI's response to history for context
+                practiceChatHistory.push({ role: "model", parts: [{ text: text }] }); // Add to history for context
 
                 updatePracticeStatus('success-text', "Đã nhận phản hồi từ Gemini.");
                 console.log("Gemini Response:", text);
@@ -1247,7 +1307,7 @@
                     } else if (promptType === 'example_sentence') {
                         promptToSend = `Tạo một câu ví dụ khác với từ "${currentVocab.chinese}" (${currentVocab.pinyin}) và dịch sang tiếng Việt.`;
                     } else if (promptType === 'quiz_question') {
-                        promptToSend = `Đặt một câu hỏi ôn tập (ví dụ: trắc nghiệm, điền từ) về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}) cho người mới học. Cung cấp đáp án và giải thích ngắn gọn.`;
+                        promptToSend = `Đặt một câu hỏi ôn tập (ví dụ: trắc nghiệm, điền từ) về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}) cho người mới học. Cung cấp đáp án đúng và giải thích ngắn gọn.`;
                     }
                     
                     handleSendPracticeMessage(promptToSend);
