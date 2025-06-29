@@ -1021,6 +1021,7 @@
                 populateVoiceList(); 
 
                 onAuthStateChanged(auth, async (user) => { // Made async to await Firestore calls
+                    console.log("onAuthStateChanged triggered. User:", user ? user.email : "null");
                     if (user) {
                         userId = user.uid; // Set userId for Firestore
                         console.log("Người dùng đã đăng nhập:", user.email, "UID:", userId);
@@ -1031,7 +1032,11 @@
                         await loadMyVocabulary(); // Load vocab from Firestore on login
 
                         // Only enable openSettingsButton upon successful login
-                        if (openSettingsButton) openSettingsButton.removeAttribute('disabled');
+                        if (openSettingsButton) {
+                            console.log("Before enabling settings button:", openSettingsButton.outerHTML);
+                            openSettingsButton.removeAttribute('disabled');
+                            console.log("After enabling settings button:", openSettingsButton.outerHTML);
+                        }
 
                         displayCurrentLesson(currentLessonIndex); // Display the first lesson
                         // Display initial greeting from Gemini in aiResponseDisplay area
@@ -1051,7 +1056,11 @@
                         quickLearnBtns.forEach(btn => btn.setAttribute('disabled', '')); 
                         saveWordButton.setAttribute('disabled', ''); 
                         // Only disable openSettingsButton on logout
-                        if (openSettingsButton) openSettingsButton.setAttribute('disabled', '');
+                        if (openSettingsButton) {
+                            console.log("Before disabling settings button:", openSettingsButton.outerHTML);
+                            openSettingsButton.setAttribute('disabled', '');
+                            console.log("After disabling settings button:", openSettingsButton.outerHTML);
+                        }
 
                         practiceInput.value = "";
                         // Clear the practice chat log and history ONLY if not in review mode
@@ -1657,6 +1666,7 @@
 
             // Settings Modal handlers
             if (openSettingsButton) openSettingsButton.addEventListener('click', () => {
+                console.log("Settings button click detected!");
                 settingsModal.classList.add('visible'); 
                 populateVoiceList(); 
                 if (rateValueSpan && rateSlider) {
