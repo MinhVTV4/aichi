@@ -541,16 +541,19 @@
                 <div class="flex items-center space-x-3">
                     <button class="icon-btn" id="openLessonSelectButton" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            <!-- New SVG for Book/Lesson Icon -->
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5a2 2 0 012-2h12a2 2 0 012 2v14M8 10h8M8 14h8M8 18h8" />
                         </svg>
                     </button>
                     <button class="icon-btn" id="openMyVocabButton" disabled>
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            <!-- Bookmark/Saved Icon (already appropriate) -->
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21.75A2.25 2.25 0 0 1 15.25 24H8.75A2.25 2.25 0 0 1 6.5 21.75V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 6.186 0ZM6.75 12H17.25" />
                         </svg>
                     </button>
                     <button class="icon-btn" id="openSettingsButton" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <!-- Settings Icon (already appropriate) -->
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.167.992h3.393a2.25 2.25 0 0 1 2.244 2.025V19.5a2.25 2.25 0 0 1-2.244 2.25H6.75a2.25 2.25 0 0 1-2.244-2.025V6.953a2.25 2.25 0 0 1 2.244-2.25h3.393l.167-.992Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9V3.75l-2.25 1.391V6M16.5 10.5V3.75L18.75 5.141V6" />
                         </svg>
@@ -635,7 +638,7 @@
                         </button>
                         <button id="practiceMicrophoneButton" class="icon-btn" disabled>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V8.25a3 3 0 0 1 3-3h0a3 3 0 0 1 3 3v4.5a3 3 0 0 1-3 3Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V8.25a3 3 0 0 1 3-3h0a3 3 0 013 3v4.5a3 3 0 01-3 3Z" />
                             </svg>
                         </button>
                     </div>
@@ -1032,9 +1035,9 @@
                         await loadMyVocabulary(); // Load vocab from Firestore on login
 
                         // Enable header buttons upon successful login
-                        if (openLessonSelectButton) openLessonSelectButton.disabled = false;
-                        if (openMyVocabButton) openMyVocabButton.disabled = false;
-                        if (openSettingsButton) openSettingsButton.disabled = false;
+                        if (openLessonSelectButton) openLessonSelectButton.removeAttribute('disabled');
+                        if (openMyVocabButton) openMyVocabButton.removeAttribute('disabled');
+                        if (openSettingsButton) openSettingsButton.removeAttribute('disabled');
 
                         displayCurrentLesson(currentLessonIndex); // Display the first lesson
                         // Display initial greeting from Gemini in aiResponseDisplay area
@@ -1049,14 +1052,14 @@
                             model = null; 
                             updatePracticeStatus('info-text', 'Mô hình AI đã ngắt kết nối. Vui lòng đăng nhập lại.');
                         }
-                        sendPracticeButton.disabled = true;
-                        practiceMicrophoneButton.disabled = true; 
-                        quickLearnBtns.forEach(btn => btn.disabled = true); 
-                        saveWordButton.disabled = true; 
+                        sendPracticeButton.setAttribute('disabled', '');
+                        practiceMicrophoneButton.setAttribute('disabled', '');
+                        quickLearnBtns.forEach(btn => btn.setAttribute('disabled', '')); 
+                        saveWordButton.setAttribute('disabled', ''); 
                         // Disable header buttons on logout
-                        if (openLessonSelectButton) openLessonSelectButton.disabled = true;
-                        if (openMyVocabButton) openMyVocabButton.disabled = true;
-                        if (openSettingsButton) openSettingsButton.disabled = true;
+                        if (openLessonSelectButton) openLessonSelectButton.setAttribute('disabled', '');
+                        if (openMyVocabButton) openMyVocabButton.setAttribute('disabled', '');
+                        if (openSettingsButton) openSettingsButton.setAttribute('disabled', '');
 
                         practiceInput.value = "";
                         // Clear the practice chat log and history ONLY if not in review mode
@@ -1086,18 +1089,18 @@
                 console.log("Generative Model instance created!");
                 updateUserStatusDisplay("AI đã sẵn sàng.", 'text-success_green');
                 
-                sendPracticeButton.disabled = false;
-                practiceMicrophoneButton.disabled = false; 
-                quickLearnBtns.forEach(btn => btn.disabled = false); 
-                saveWordButton.disabled = false; 
+                sendPracticeButton.removeAttribute('disabled');
+                practiceMicrophoneButton.removeAttribute('disabled'); 
+                quickLearnBtns.forEach(btn => btn.removeAttribute('disabled')); 
+                saveWordButton.removeAttribute('disabled'); 
             } catch (e) {
                 console.error("Error initializing AI Model:", e);
                 updateUserStatusDisplay("Lỗi khởi tạo AI.", 'text-error_red');
                 updatePracticeStatus('error-text', `Lỗi khởi tạo AI Model: ${e.message}.<br>Đảm bảo Gemini API đã được kích hoạt cho dự án của bạn.`);
-                sendPracticeButton.disabled = true;
-                practiceMicrophoneButton.disabled = true;
-                quickLearnBtns.forEach(btn => btn.disabled = true);
-                saveWordButton.disabled = true; 
+                sendPracticeButton.setAttribute('disabled', '');
+                practiceMicrophoneButton.setAttribute('disabled', '');
+                quickLearnBtns.forEach(btn => btn.setAttribute('disabled', ''));
+                saveWordButton.setAttribute('disabled', ''); 
             }
         }
 
@@ -1217,10 +1220,10 @@
                 pinyin.textContent = "";
                 vietnameseMeaning.textContent = "";
                 vocabCounter.textContent = "0/0";
-                prevVocabButton.disabled = true;
-                nextVocabButton.disabled = true;
-                saveWordButton.disabled = true;
-                pronounceButton.disabled = true;
+                prevVocabButton.setAttribute('disabled', '');
+                nextVocabButton.setAttribute('disabled', '');
+                saveWordButton.setAttribute('disabled', '');
+                pronounceButton.setAttribute('disabled', '');
                 return;
             }
             const currentItem = currentLesson.vocabulary[currentVocabIndexInLesson];
@@ -1229,11 +1232,19 @@
             vietnameseMeaning.textContent = currentItem.vietnamese;
             vocabCounter.textContent = `${currentVocabIndexInLesson + 1}/${currentLesson.vocabulary.length}`;
 
-            prevVocabButton.disabled = currentVocabIndexInLesson === 0;
-            nextVocabButton.disabled = currentVocabIndexInLesson === currentLesson.vocabulary.length - 1;
+            if (currentVocabIndexInLesson === 0) {
+                prevVocabButton.setAttribute('disabled', '');
+            } else {
+                prevVocabButton.removeAttribute('disabled');
+            }
+            if (currentVocabIndexInLesson === currentLesson.vocabulary.length - 1) {
+                nextVocabButton.setAttribute('disabled', '');
+            } else {
+                nextVocabButton.removeAttribute('disabled');
+            }
             
-            pronounceButton.disabled = false; 
-            saveWordButton.disabled = false; // Enable save button if vocab is present
+            pronounceButton.removeAttribute('disabled'); 
+            saveWordButton.removeAttribute('disabled'); // Enable save button if vocab is present
         }
 
         // --- My Vocabulary Functions (Firestore Integration) ---
@@ -1425,7 +1436,7 @@
                 option.textContent = "Không có giọng đọc";
                 option.value = "";
                 voiceSelect.appendChild(option);
-                voiceSelect.disabled = true;
+                voiceSelect.setAttribute('disabled', '');
                 console.warn("No suitable voices found for TTS.");
             } else {
                 filteredVoices.forEach((voice, index) => {
@@ -1439,7 +1450,7 @@
                         selectedVoice = voice;
                     }
                 });
-                voiceSelect.disabled = false;
+                voiceSelect.removeAttribute('disabled');
                 if (selectedVoice && filteredVoices.some(v => v.name === selectedVoice.name)) {
                      voiceSelect.value = selectedVoice.name;
                 } else if (filteredVoices.length > 0 && !selectedVoice) {
@@ -1496,7 +1507,7 @@
         // --- Speech-to-Text (STT) Functions ---
         function initializeSpeechRecognition() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                practiceMicrophoneButton.disabled = true;
+                practiceMicrophoneButton.setAttribute('disabled', '');
                 console.warn("Speech Recognition not supported in this browser.");
                 showCustomMessageBox("Tính năng nhận diện giọng nói không được hỗ trợ trên trình duyệt này.");
                 return null; 
@@ -1514,9 +1525,9 @@
                 practiceInput.placeholder = 'Đang nghe...';
                 practiceInput.value = '';
                 finalTranscript = '';
-                sendPracticeButton.disabled = true; 
-                practiceInput.disabled = true; 
-                quickLearnBtns.forEach(btn => btn.disabled = true);
+                sendPracticeButton.setAttribute('disabled', ''); 
+                practiceInput.setAttribute('disabled', ''); 
+                quickLearnBtns.forEach(btn => btn.setAttribute('disabled', ''));
             };
 
             recognition.onresult = (event) => {
@@ -1537,9 +1548,9 @@
                 updatePracticeStatus('error-text', `Lỗi nhận diện giọng nói: ${event.error}`);
                 console.error('Speech recognition error:', event.error);
                 practiceInput.placeholder = 'Hỏi AI hoặc trả lời bài tập...';
-                sendPracticeButton.disabled = false; 
-                practiceInput.disabled = false;
-                quickLearnBtns.forEach(btn => btn.disabled = false);
+                sendPracticeButton.removeAttribute('disabled'); 
+                practiceInput.removeAttribute('disabled');
+                quickLearnBtns.forEach(btn => btn.removeAttribute('disabled'));
             };
 
             recognition.onend = () => {
@@ -1554,9 +1565,9 @@
                 } else {
                     updatePracticeStatus('info-info', 'Không nhận diện được giọng nói. Vui lòng thử lại.');
                 }
-                sendPracticeButton.disabled = false; 
-                practiceInput.disabled = false;
-                quickLearnBtns.forEach(btn => btn.disabled = false);
+                sendPracticeButton.removeAttribute('disabled'); 
+                practiceInput.removeAttribute('disabled');
+                quickLearnBtns.forEach(btn => btn.removeAttribute('disabled'));
             };
 
             return recognition; 
@@ -1605,12 +1616,12 @@
             updatePracticeStatus('info-text', "Đang gửi yêu cầu đến Gemini...");
             displayAiResponse('', true); // Show spinner in AI response area
 
-            sendPracticeButton.disabled = true;
+            sendPracticeButton.setAttribute('disabled', '');
             sendPracticeIcon.classList.add('hidden'); 
             sendPracticeButtonSpinner.classList.remove('hidden'); 
-            practiceInput.disabled = true; 
-            practiceMicrophoneButton.disabled = true; 
-            quickLearnBtns.forEach(btn => btn.disabled = true);
+            practiceInput.setAttribute('disabled', ''); 
+            practiceMicrophoneButton.setAttribute('disabled', ''); 
+            quickLearnBtns.forEach(btn => btn.setAttribute('disabled', ''));
 
             try {
                 const currentLesson = lessons[currentLessonIndex];
@@ -1667,12 +1678,12 @@
                 displayAiResponse(`Lỗi: ${error.message}. Vui lòng thử lại.`); // Display error in AI response area
                 updatePracticeStatus('error-text', `Lỗi khi gọi Gemini API: ${error.message}.`);
             } finally {
-                sendPracticeButton.disabled = false;
+                sendPracticeButton.removeAttribute('disabled');
                 sendPracticeIcon.classList.remove('hidden'); 
                 sendPracticeButtonSpinner.classList.add('hidden'); 
-                practiceInput.disabled = false;
-                practiceMicrophoneButton.disabled = false; 
-                quickLearnBtns.forEach(btn => btn.disabled = false);
+                practiceInput.removeAttribute('disabled');
+                practiceMicrophoneButton.removeAttribute('disabled'); 
+                quickLearnBtns.forEach(btn => btn.removeAttribute('disabled'));
                 practiceInput.focus(); 
             }
         }
