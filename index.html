@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-M-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ứng dụng Học Tiếng Trung</title>
     <!-- Tailwind CSS CDN for styling -->
@@ -722,12 +722,12 @@
 
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyBKiBEzKjB_nKqqa9TH5b9hsHQwZ0TwdgI",
-            authDomain: "aichi-83245.firebaseapp.com",
-            projectId: "aichi-83245",
-            storageBucket: "aichi-83245.firebasestorage.app",
-            messagingSenderId: "532479272965",
-            appId: "1:532479272965:web:583c26199935939e37146c"
+            apiKey: "AIzaSyBWO1GZFRyMUiMKRuzC-UAhg2aQSKygfe4",
+            authDomain: "aichi-ec042.firebaseapp.com",
+            projectId: "aichi-ec042",
+            storageBucket: "aichi-ec042.firebasestorage.app",
+            messagingSenderId: "832803432853",
+            appId: "1:832803432853:web:11a0161ed0bf1d09c92e9c"
         };
 
         let app;
@@ -817,7 +817,7 @@
                 ],
                 grammar_points: [
                     { title: 'Đại từ nhân xưng cơ bản (你, 我, 他)', explanation: 'Trong tiếng Trung, đại từ nhân xưng đứng trước động từ hoặc tính từ. Ví dụ: 你好 (Nǐ hǎo - Bạn tốt/Xin chào), 我很好 (Wǒ hěn hǎo - Tôi rất tốt).', examples: ['你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', '我是学生。(Wǒ shì xuéshēng.) - Tôi là học sinh.'] },
-                    { title: 'Cấu trúc khen ngợi với "很"', explanation: 'Phó từ "很" (hěn) có nghĩa là "rất", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).', examples: ['他很高兴。(Tā hěn gāoxìng.) - Anh ấy rất vui.', '她很漂亮。(Tā hěn piàoliang.) - Cô ấy rất đẹp.'] }
+                    { title: 'Cấu trúc khen ngợi với "很"', explanation: 'Phó từ "很" (hěn) có nghĩa là "rất", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).', examples: ['他很高兴。(Tā hěn gāoxìng.) - Anh ấy rất vui.', 'Cô ấy rất đẹp。(Tā hěn piàoliang.)'] }
                 ]
             },
             {
@@ -832,8 +832,8 @@
                     { id: 'laoshi', chinese: "老师", pinyin: "lǎoshī", vietnamese: "giáo viên" }
                 ],
                 grammar_points: [
-                    { title: 'Cấu trúc "A 是 B"', explanation: 'Đây là cấu trúc câu khẳng định cơ bản trong tiếng Trung, dùng để nói "A là B". Ví dụ: 我是学生 (Wǒ shì xuéshēng - Tôi là học sinh).', examples: ['他是医生。(Tā shì yīshēng.) - Anh ấy là bác sĩ.', '你是不是中国人？(Nǐ shì bú shì Zhōngguó rén?) - Bạn có phải người Trung Quốc không?'] },
-                    { title: 'Hỏi tên với "叫什么名字"', explanation: 'Cụm từ "叫什么名字" (jiào shénme míngzi) dùng để hỏi tên. Ví dụ: 你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', examples: ['她叫什么名字？(Tā jiào shénme míngzi?) - Cô ấy tên là gì?'] }
+                    { title: 'Cấu trúc "A 是 B"', explanation: 'Đây là cấu trúc câu khẳng định cơ bản trong tiếng Trung, dùng để nói "A là B". Ví dụ: 我是学生 (Wǒ shì xuéshēng - Tôi là học sinh).', examples: ['Anh ấy là bác sĩ。(Tā shì yīshēng.)', 'Bạn có phải người Trung Quốc không？(Nǐ shì bú shì Zhōngguó rén?)'] },
+                    { title: 'Hỏi tên với "叫什么名字"', explanation: 'Cụm từ "叫什么名字" (jiào shénme míngzi) dùng để hỏi tên. Ví dụ: Bạn tên là gì？(Nǐ jiào shénme míngzi?)', examples: ['Cô ấy tên là gì？(Tā jiào shénme míngzi?)'] }
                 ]
             }
             // Add more lessons here following the same structure
@@ -842,7 +842,7 @@
         let currentVocabIndexInLesson = 0; // Current vocabulary item index within the selected lesson
 
         let mySavedVocabulary = []; // Will be loaded/saved from Firestore
-        let currentReviewWordIndex = 0; // Index for the current word in review session
+        let currentReviewWordIndexInSession = 0; // Index for the current word in review session
         let reviewWords = []; // Array of words for the current review session
 
         // Practice conversation history for Gemini context
@@ -1341,7 +1341,7 @@
                 }
                 await deleteDoc(doc(vocabCollectionRef, wordId));
                 mySavedVocabulary = mySavedVocabulary.filter(word => word.id !== wordId); // Update local array
-                localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary)); // Update local storage as fallback/sync
+                // localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary)); // Update local storage as fallback/sync - Removed as Firestore is primary
                 showCustomMessageBox("Đã xóa từ vựng.");
                 displayMyVocabulary(); // Refresh the displayed list
             } catch (error) {
