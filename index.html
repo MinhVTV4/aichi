@@ -539,17 +539,17 @@
                     <p class="text-xs text-text_secondary" id="userStatus">AI đã sẵn sàng.</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button class="icon-btn" id="openLessonSelectButton">
+                    <button class="icon-btn" id="openLessonSelectButton" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                     </button>
-                    <button class="icon-btn" id="openMyVocabButton">
+                    <button class="icon-btn" id="openMyVocabButton" disabled>
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                     </button>
-                    <button class="icon-btn" id="openSettingsButton">
+                    <button class="icon-btn" id="openSettingsButton" disabled>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.167.992h3.393a2.25 2.25 0 0 1 2.244 2.025V19.5a2.25 2.25 0 0 1-2.244 2.25H6.75a2.25 2.25 0 0 1-2.244-2.025V6.953a2.25 2.25 0 0 1 2.244-2.25h3.393l.167-.992Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9V3.75l-2.25 1.391V6M16.5 10.5V3.75L18.75 5.141V6" />
@@ -816,8 +816,8 @@
                     { id: 'meiguanxi', chinese: "没关系", pinyin: "Méi guānxi", vietnamese: "Không sao" }
                 ],
                 grammar_points: [
-                    { title: 'Đại từ nhân xưng cơ bản (你, 我, 他)', explanation: 'Trong tiếng Trung, đại từ nhân xưng đứng trước động từ hoặc tính từ. Ví dụ: 你好 (Nǐ hǎo - Bạn tốt/Xin chào), 我很好 (Wǒ hěn hǎo - Tôi rất tốt).', examples: ['你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', '我是学生。(Wǒ shì xuéshēng.) - Tôi là học sinh.'] },
-                    { title: 'Cấu trúc khen ngợi với "很"', explanation: 'Phó từ "很" (hěn) có nghĩa là "rất", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).', examples: ['他很高兴。(Tā hěn gāoxìng.) - Anh ấy rất vui.', 'Cô ấy rất đẹp。(Tā hěn piàoliang.)'] }
+                    { title: 'Đại từ nhân xưng cơ bản (你, 我, 他)', explanation: 'Trong tiếng Trung, đại từ nhân xưng đứng trước động từ hoặc tính từ. Ví dụ: 你好 (Nǐ hǎo - Bạn tốt/Xin chào), 我很好 (Wǒ hěn hǎo - Tôi rất tốt).', examples: ['你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', 'Tôi là học sinh。(Wǒ shì xuéshēng.)'] },
+                    { title: 'Cấu trúc khen ngợi với "很"', explanation: 'Phó từ "很" (hěn) có nghĩa là "rất", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).', examples: ['Anh ấy rất vui。(Tā hěn gāoxìng.)', 'Cô ấy rất đẹp。(Tā hěn piàoliang.)'] }
                 ]
             },
             {
@@ -832,7 +832,7 @@
                     { id: 'laoshi', chinese: "老师", pinyin: "lǎoshī", vietnamese: "giáo viên" }
                 ],
                 grammar_points: [
-                    { title: 'Cấu trúc "A 是 B"', explanation: 'Đây là cấu trúc câu khẳng định cơ bản trong tiếng Trung, dùng để nói "A là B". Ví dụ: 我是学生 (Wǒ shì xuéshēng - Tôi là học sinh).', examples: ['Anh ấy là bác sĩ。(Tā shì yīshēng.)', 'Bạn có phải người Trung Quốc không？(Nǐ shì bú shì Zhōngguó rén?)'] },
+                    { title: 'Cấu trúc "A 是 B"', explanation: 'Đây là cấu trúc câu khẳng định cơ bản trong tiếng Trung, dùng để nói "A là B". Ví dụ: Tôi là học sinh (Wǒ shì xuéshēng).', examples: ['Anh ấy là bác sĩ。(Tā shì yīshēng.)', 'Bạn có phải người Trung Quốc không？(Nǐ shì bú shì Zhōngguó rén?)'] },
                     { title: 'Hỏi tên với "叫什么名字"', explanation: 'Cụm từ "叫什么名字" (jiào shénme míngzi) dùng để hỏi tên. Ví dụ: Bạn tên là gì？(Nǐ jiào shénme míngzi?)', examples: ['Cô ấy tên là gì？(Tā jiào shénme míngzi?)'] }
                 ]
             }
@@ -1030,6 +1030,12 @@
                         mainLearningContent.classList.remove('hidden'); 
                         initializeGeminiModel(); 
                         await loadMyVocabulary(); // Load vocab from Firestore on login
+
+                        // Enable header buttons upon successful login
+                        if (openLessonSelectButton) openLessonSelectButton.disabled = false;
+                        if (openMyVocabButton) openMyVocabButton.disabled = false;
+                        if (openSettingsButton) openSettingsButton.disabled = false;
+
                         displayCurrentLesson(currentLessonIndex); // Display the first lesson
                         // Display initial greeting from Gemini in aiResponseDisplay area
                         displayAiResponse(practiceChatHistory[0].parts[0].text);
@@ -1047,7 +1053,11 @@
                         practiceMicrophoneButton.disabled = true; 
                         quickLearnBtns.forEach(btn => btn.disabled = true); 
                         saveWordButton.disabled = true; 
-                        // mySavedVocabulary = []; // Clear local vocab data if no user
+                        // Disable header buttons on logout
+                        if (openLessonSelectButton) openLessonSelectButton.disabled = true;
+                        if (openMyVocabButton) openMyVocabButton.disabled = true;
+                        if (openSettingsButton) openSettingsButton.disabled = true;
+
                         practiceInput.value = "";
                         // Clear the practice chat log and history ONLY if not in review mode
                         practiceChatLog.innerHTML = ''; 
