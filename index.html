@@ -173,6 +173,33 @@
             width: 20px;
             height: 20px;
         }
+        /* Grammar section styling */
+        .grammar-section {
+            background-color: var(--tw-colors-card_bg);
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            margin-top: 1rem;
+            text-align: left;
+        }
+        .grammar-point-title {
+            font-weight: bold;
+            color: var(--tw-colors-primary_blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .grammar-explanation {
+            font-size: 0.95rem;
+            color: var(--tw-colors-text_dark);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+        .grammar-examples {
+            font-size: 0.9rem;
+            color: var(--tw-colors-text_secondary);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
 
 
         /* Practice section styling */
@@ -249,13 +276,13 @@
             margin-top: 1em;
             margin-bottom: 0.5em;
             color: var(--tw-colors-text_dark);
-            line-height: 1.2; /* Tighter line height for headings */
+            line-height: 1.2; 
         }
         .markdown-body h1 { font-size: 1.8em; }
         .markdown-body h2 { font-size: 1.5em; }
         .markdown-body h3 { font-size: 1.1em; }
         .markdown-body p {
-            margin-bottom: 0.8em; /* Slightly less space for paragraphs */
+            margin-bottom: 0.8em; 
         }
         .markdown-body ul, .markdown-body ol {
             list-style-position: outside; 
@@ -296,14 +323,14 @@
         /* User input log in practice section */
         #practiceChatLog {
             background-color: var(--tw-colors-input_field_bg); 
-            padding: 1rem; /* Consistent padding */
+            padding: 1rem; 
             border-radius: 0.5rem;
             max-height: 150px; 
             overflow-y: auto;
             margin-bottom: 1rem;
-            display: flex; /* Make it a flex container for messages */
+            display: flex; 
             flex-direction: column;
-            gap: 0.5rem; /* Space between logged user messages */
+            gap: 0.5rem; 
         }
         .practice-chat-message { 
             background-color: white; 
@@ -314,7 +341,7 @@
             align-self: flex-end; 
             max-width: 90%;
             word-wrap: break-word;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Shadow for logged messages */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
         }
         
         /* Input bar styling */
@@ -338,7 +365,7 @@
             color: var(--tw-colors-text_dark);
         }
         
-        /* Settings Modal styling */
+        /* Modals styling */
         .modal {
             position: fixed;
             top: 0;
@@ -350,6 +377,13 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0; /* Hidden by default */
+            visibility: hidden; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
         }
         .modal-content {
             background-color: white;
@@ -358,6 +392,34 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             width: 90%;
             max-width: 350px;
+            transform: translateY(-20px); /* Initial state for animation */
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal.visible .modal-content {
+            transform: translateY(0); /* Final state for animation */
+        }
+        /* Modal List Item Styling (for lesson select and vocab list) */
+        .modal-list-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--tw-colors-border_light);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-align: left;
+        }
+        .modal-list-item:hover {
+            background-color: #F0F0F0;
+        }
+        .modal-list-item:last-child {
+            border-bottom: none;
+        }
+        .modal-list-item h4 {
+            font-weight: 600;
+            color: var(--tw-colors-text_dark);
+            font-size: 1rem;
+        }
+        .modal-list-item p {
+            font-size: 0.85rem;
+            color: var(--tw-colors-text_secondary);
         }
 
         /* My Vocabulary Modal */
@@ -367,7 +429,7 @@
             align-items: center;
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--tw-colors-border_light);
-            font-size: 0.9rem; /* Smaller font for list items */
+            font-size: 0.9rem; 
         }
         #myVocabModal .my-vocab-item:last-child {
             border-bottom: none;
@@ -383,7 +445,7 @@
             border-radius: 0.25rem;
             font-size: 0.75rem;
             transition: background-color 0.2s ease;
-            margin-right: 0.5rem; /* Space between buttons */
+            margin-right: 0.5rem; 
         }
         #myVocabModal .my-vocab-item .review-btn:hover {
             background-color: #2563EB;
@@ -414,7 +476,7 @@
             color: var(--tw-colors-text_dark);
             cursor: pointer;
             text-align: center;
-            user-select: none; /* Prevent text selection */
+            user-select: none; 
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -477,6 +539,11 @@
                     <p class="text-xs text-text_secondary" id="userStatus">AI đã sẵn sàng.</p>
                 </div>
                 <div class="flex items-center space-x-3">
+                    <button class="icon-btn" id="openLessonSelectButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </button>
                     <button class="icon-btn" id="openMyVocabButton">
                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.725 8.725 0 0 0 10.5 12c0 4.757 1.79 8.725 4.5 10.5M17.25 10.5H12V5.25L17.25 10.5ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -500,7 +567,7 @@
             <div id="mainContentArea">
                 <!-- Lesson Section -->
                 <div class="lesson-section">
-                    <h2 class="text-xl font-bold text-text_dark mb-4">Bài 1: Chào hỏi cơ bản</h2>
+                    <h2 class="text-xl font-bold text-text_dark mb-4" id="lessonTitle">Bài 1: Chào hỏi cơ bản</h2>
                     
                     <div class="lesson-vocab-display">
                         <button id="saveWordButton" class="save-word-btn btn-animation">
@@ -520,6 +587,12 @@
                         <button id="prevVocabButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg btn-animation">Trước</button>
                         <span id="vocabCounter" class="text-lg font-semibold text-text_secondary self-center">1/3</span>
                         <button id="nextVocabButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg btn-animation">Tiếp theo</button>
+                    </div>
+
+                    <!-- Grammar Points Display -->
+                    <div id="grammarPointsDisplay" class="grammar-section mt-4 hidden">
+                        <h3 class="grammar-point-title">Ngữ pháp chính:</h3>
+                        <!-- Grammar points will be inserted here by JS -->
                     </div>
                 </div>
 
@@ -548,6 +621,7 @@
                         <button class="quick-learn-btn bg-purple-100 hover:bg-purple-200 text-secondary text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="example_sentence">Tạo một câu ví dụ</button>
                         <button class="quick-learn-btn bg-green-100 hover:bg-green-200 text-success_green text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="quiz_question">Câu hỏi ôn tập</button>
                         <button class="quick-learn-btn bg-red-100 hover:bg-red-200 text-error_red text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="pronunciation_practice">Luyện nói từ/câu</button>
+                        <button class="quick-learn-btn bg-yellow-100 hover:bg-yellow-200 text-orange_accent text-sm font-semibold py-2 px-4 rounded-full btn-animation" data-prompt-type="grammar_question">Hỏi ngữ pháp liên quan</button>
                     </div>
 
                     <!-- Input Area for Practice -->
@@ -608,6 +682,17 @@
         </div>
     </div>
 
+    <!-- Lesson Select Modal (New) -->
+    <div id="lessonSelectModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold text-text_dark mb-4">Chọn Bài Học</h3>
+            <div id="lessonList" class="mb-4 max-h-80 overflow-y-auto border border-border_light rounded-lg p-2">
+                <!-- Lesson list will be populated here -->
+            </div>
+            <button id="closeLessonSelectButton" class="bg-primary_blue hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg w-full btn-animation">Đóng</button>
+        </div>
+    </div>
+
     <!-- Marked.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -622,6 +707,18 @@
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js"; 
         import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-ai.js";
+        // Import Firestore SDK
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDocs, 
+            deleteDoc,
+            query,
+            where // Added where for potential future use
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -635,6 +732,8 @@
 
         let app;
         let auth;
+        let db; // Firestore instance
+        let userId = 'anonymous'; // Default for unauthenticated users
         let model; 
 
         // UI Elements - Declared and assigned here
@@ -649,6 +748,7 @@
         const userStatusDisplay = document.getElementById('userStatus'); 
         const signOutButtonSmall = document.getElementById('signOutButtonSmall'); 
 
+        const lessonTitle = document.getElementById('lessonTitle'); // New lesson title display
         const chineseChar = document.getElementById('chineseChar');
         const pinyin = document.getElementById('pinyin');
         const vietnameseMeaning = document.getElementById('vietnameseMeaning');
@@ -657,6 +757,7 @@
         const nextVocabButton = document.getElementById('nextVocabButton');
         const vocabCounter = document.getElementById('vocabCounter');
         const saveWordButton = document.getElementById('saveWordButton'); 
+        const grammarPointsDisplay = document.getElementById('grammarPointsDisplay'); // New grammar display
 
         const aiResponseDisplay = document.getElementById('aiResponseDisplay');
         const practiceInput = document.getElementById('practiceInput');
@@ -684,7 +785,12 @@
         const reviewControls = document.getElementById('reviewControls'); 
         const easyBtn = reviewControls.querySelector('.easy-btn'); 
         const hardBtn = reviewControls.querySelector('.hard-btn'); 
-        const skipBtn = reviewControls.querySelector('.skip-btn'); 
+        const skipBtn = reviewControls.querySelector('.skip-btn');
+
+        const lessonSelectModal = document.getElementById('lessonSelectModal'); // New Lesson Select Modal
+        const openLessonSelectButton = document.getElementById('openLessonSelectButton'); // New Open Lesson Select Button
+        const closeLessonSelectButton = document.getElementById('closeLessonSelectButton'); // New Close Lesson Select Button
+        const lessonList = document.getElementById('lessonList'); // New Lesson List container
 
 
         // TTS Variables
@@ -696,17 +802,46 @@
         let isListening = false;
         let finalTranscript = '';
 
-        // Lesson Data
-        const lessonVocabulary = [
-            { id: 'nihao', chinese: "你好", pinyin: "Nǐ hǎo", vietnamese: "Xin chào" },
-            { id: 'xiexie', chinese: "谢谢", pinyin: "Xièxie", vietnamese: "Cảm ơn" },
-            { id: 'zaijian', chinese: "再见", pinyin: "Zài jiàn", vietnamese: "Tạm biệt" },
-            { id: 'henhao', chinese: "很好", pinyin: "Hěn hǎo", vietnamese: "Rất tốt" },
-            { id: 'duibuqi', chinese: "对不起", pinyin: "Duìbuqǐ", vietnamese: "Xin lỗi" },
-            { id: 'meiguanxi', chinese: "没关系", pinyin: "Méi guānxi", vietnamese: "Không sao" }
+        // Lesson Data - Expanded Structure for multiple lessons
+        const lessons = [
+            {
+                id: 'lesson1_basic_greetings',
+                title: 'Bài 1: Chào hỏi cơ bản',
+                description: 'Học các từ và cụm từ để chào hỏi, cảm ơn, xin lỗi.',
+                vocabulary: [
+                    { id: 'nihao', chinese: "你好", pinyin: "Nǐ hǎo", vietnamese: "Xin chào" },
+                    { id: 'xiexie', chinese: "谢谢", pinyin: "Xièxie", vietnamese: "Cảm ơn" },
+                    { id: 'zaijian', chinese: "再见", pinyin: "Zài jiàn", vietnamese: "Tạm biệt" },
+                    { id: 'duibuqi', chinese: "对不起", pinyin: "Duìbuqǐ", vietnamese: "Xin lỗi" },
+                    { id: 'meiguanxi', chinese: "没关系", pinyin: "Méi guānxi", vietnamese: "Không sao" }
+                ],
+                grammar_points: [
+                    { title: 'Đại từ nhân xưng cơ bản (你, 我, 他)', explanation: 'Trong tiếng Trung, đại từ nhân xưng đứng trước động từ hoặc tính từ. Ví dụ: 你好 (Nǐ hǎo - Bạn tốt/Xin chào), 我很好 (Wǒ hěn hǎo - Tôi rất tốt).', examples: ['你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', '我是学生。(Wǒ shì xuéshēng.) - Tôi là học sinh.'] },
+                    { title: 'Cấu trúc khen ngợi với "很"', explanation: 'Phó từ "很" (hěn) có nghĩa là "rất", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).', examples: ['他很高兴。(Tā hěn gāoxìng.) - Anh ấy rất vui.', '她很漂亮。(Tā hěn piàoliang.) - Cô ấy rất đẹp.'] }
+                ]
+            },
+            {
+                id: 'lesson2_self_introduction',
+                title: 'Bài 2: Giới thiệu bản thân',
+                description: 'Học cách giới thiệu tên, nghề nghiệp và hỏi thông tin cơ bản.',
+                vocabulary: [
+                    { id: 'wojiao', chinese: "我叫", pinyin: "Wǒ jiào", vietnamese: "Tôi tên là" },
+                    { id: 'shi', chinese: "是", pinyin: "shì", vietnamese: "là" },
+                    { id: 'renshi', chinese: "认识", pinyin: "rènshi", vietnamese: "quen biết" },
+                    { id: 'xuesheng', chinese: "学生", pinyin: "xuésheng", vietnamese: "học sinh" },
+                    { id: 'laoshi', chinese: "老师", pinyin: "lǎoshī", vietnamese: "giáo viên" }
+                ],
+                grammar_points: [
+                    { title: 'Cấu trúc "A 是 B"', explanation: 'Đây là cấu trúc câu khẳng định cơ bản trong tiếng Trung, dùng để nói "A là B". Ví dụ: 我是学生 (Wǒ shì xuéshēng - Tôi là học sinh).', examples: ['他是医生。(Tā shì yīshēng.) - Anh ấy là bác sĩ.', '你是不是中国人？(Nǐ shì bú shì Zhōngguó rén?) - Bạn có phải người Trung Quốc không?'] },
+                    { title: 'Hỏi tên với "叫什么名字"', explanation: 'Cụm từ "叫什么名字" (jiào shénme míngzi) dùng để hỏi tên. Ví dụ: 你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?', examples: ['她叫什么名字？(Tā jiào shénme míngzi?) - Cô ấy tên là gì?'] }
+                ]
+            }
+            // Add more lessons here following the same structure
         ];
-        let currentVocabIndex = 0;
-        let mySavedVocabulary = JSON.parse(localStorage.getItem('mySavedVocabulary')) || []; // Load from local storage
+        let currentLessonIndex = 0; // Current index in the lessons array
+        let currentVocabIndexInLesson = 0; // Current vocabulary item index within the selected lesson
+
+        let mySavedVocabulary = []; // Will be loaded/saved from Firestore
         let currentReviewWordIndex = 0; // Index for the current word in review session
         let reviewWords = []; // Array of words for the current review session
 
@@ -872,7 +1007,8 @@
             try {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
-                console.log("Firebase App và Auth đã khởi tạo!");
+                db = getFirestore(app); // Initialize Firestore
+                console.log("Firebase App, Auth, và Firestore đã khởi tạo!");
                 updateUserStatusDisplay("Đang kiểm tra đăng nhập...");
                 
                 // Initialize speechRate and its display after DOM is loaded
@@ -885,17 +1021,20 @@
                 speechSynthesis.onvoiceschanged = populateVoiceList;
                 populateVoiceList(); 
 
-                onAuthStateChanged(auth, (user) => {
+                onAuthStateChanged(auth, async (user) => { // Made async to await Firestore calls
                     if (user) {
-                        console.log("Người dùng đã đăng nhập:", user.email);
+                        userId = user.uid; // Set userId for Firestore
+                        console.log("Người dùng đã đăng nhập:", user.email, "UID:", userId);
                         updateUserStatusDisplay("Đã đăng nhập.", 'text-success_green');
                         authSection.classList.add('hidden'); 
                         mainLearningContent.classList.remove('hidden'); 
                         initializeGeminiModel(); 
-                        displayCurrentVocab(); 
+                        await loadMyVocabulary(); // Load vocab from Firestore on login
+                        displayCurrentLesson(currentLessonIndex); // Display the first lesson
                         // Display initial greeting from Gemini in aiResponseDisplay area
                         displayAiResponse(practiceChatHistory[0].parts[0].text);
                     } else {
+                        userId = 'anonymous'; // Reset userId if logged out
                         console.log("Người dùng đã đăng xuất.");
                         updateUserStatusDisplay("Vui lòng đăng nhập.", 'text-text_secondary');
                         authSection.classList.remove('hidden'); 
@@ -908,13 +1047,15 @@
                         practiceMicrophoneButton.disabled = true; 
                         quickLearnBtns.forEach(btn => btn.disabled = true); 
                         saveWordButton.disabled = true; 
+                        // mySavedVocabulary = []; // Clear local vocab data if no user
                         practiceInput.value = "";
+                        // Clear the practice chat log and history ONLY if not in review mode
                         practiceChatLog.innerHTML = ''; 
                         practiceChatLog.classList.add('hidden'); // Hide chat log on logout
                         practiceChatHistory = [ 
                             { role: "model", parts: [{ text: `Chào bạn! Tôi là trợ lý giáo viên tiếng Trung thân thiện và chuyên nghiệp. Nhiệm vụ của bạn là giúp người học tiếng Trung bằng cách giải thích từ vựng, ngữ pháp, cung cấp ví dụ, trả lời câu hỏi và đưa ra các bài tập nhỏ. Luôn trả lời bằng tiếng Việt, nhưng hãy cung cấp Hán tự và pinyin khi đề cập đến từ/cụm từ tiếng Trung. Bạn có thể hỏi tôi về từ vựng, ngữ pháp, hoặc yêu cầu một bài tập nhỏ nhé!` }] }
                         ]; 
-                        displayAiResponse(practiceChatHistory[0].parts[0].text); 
+                        displayAiResponse(practiceChatHistory[0].parts[0].text); // Show initial greeting on logout
                     }
                 });
 
@@ -931,7 +1072,7 @@
             try {
                 updateUserStatusDisplay("Đang khởi tạo AI Model...", 'text-yellow-600'); 
                 const ai = getAI(app, { backend: new GoogleAIBackend() });
-                model = getGenerativeModel(ai, { model: "gemini-2.5-flash" }); 
+                model = getGenerativeModel(ai, { model: "gemini-2.5-flash" });
                 console.log("Generative Model instance created!");
                 updateUserStatusDisplay("AI đã sẵn sàng.", 'text-success_green');
                 
@@ -1027,46 +1168,129 @@
             }
         }
 
-        // --- Lesson Section Functions ---
-        function displayCurrentVocab() {
-            if (lessonVocabulary.length === 0) {
+        // --- Lesson Functions ---
+        // Function to display the content of the selected lesson
+        function displayCurrentLesson(lessonIndex) {
+            currentLessonIndex = lessonIndex;
+            const currentLesson = lessons[currentLessonIndex];
+            
+            lessonTitle.textContent = currentLesson.title;
+            // Reset vocab index for new lesson
+            currentVocabIndexInLesson = 0; 
+            displayCurrentVocabInLesson();
+
+            // Display grammar points
+            grammarPointsDisplay.classList.remove('hidden');
+            grammarPointsDisplay.innerHTML = '<h3 class="grammar-point-title">Ngữ pháp chính:</h3>'; // Reset
+            if (currentLesson.grammar_points && currentLesson.grammar_points.length > 0) {
+                currentLesson.grammar_points.forEach(gp => {
+                    const gpDiv = document.createElement('div');
+                    gpDiv.className = 'mb-3';
+                    gpDiv.innerHTML = `
+                        <p class="font-semibold text-primary_blue text-base">${gp.title}</p>
+                        <p class="grammar-explanation">${gp.explanation}</p>
+                        ${gp.examples ? `<ul class="grammar-examples list-disc pl-5">` + gp.examples.map(ex => `<li>${ex}</li>`).join('') + `</ul>` : ''}
+                    `;
+                    grammarPointsDisplay.appendChild(gpDiv);
+                });
+            } else {
+                grammarPointsDisplay.innerHTML += '<p class="text-text_secondary text-sm">Không có điểm ngữ pháp chính trong bài này.</p>';
+            }
+            mainContentArea.scrollTop = 0; // Scroll to top of content area
+        }
+
+        // Function to display current vocabulary item within the active lesson
+        function displayCurrentVocabInLesson() {
+            const currentLesson = lessons[currentLessonIndex];
+            if (!currentLesson || currentLesson.vocabulary.length === 0) {
                 chineseChar.textContent = "Không có từ vựng.";
                 pinyin.textContent = "";
                 vietnameseMeaning.textContent = "";
                 vocabCounter.textContent = "0/0";
+                prevVocabButton.disabled = true;
+                nextVocabButton.disabled = true;
+                saveWordButton.disabled = true;
+                pronounceButton.disabled = true;
                 return;
             }
-            const currentItem = lessonVocabulary[currentVocabIndex];
+            const currentItem = currentLesson.vocabulary[currentVocabIndexInLesson];
             chineseChar.textContent = currentItem.chinese;
             pinyin.textContent = currentItem.pinyin;
             vietnameseMeaning.textContent = currentItem.vietnamese;
-            vocabCounter.textContent = `${currentVocabIndex + 1}/${lessonVocabulary.length}`;
+            vocabCounter.textContent = `${currentVocabIndexInLesson + 1}/${currentLesson.vocabulary.length}`;
 
-            prevVocabButton.disabled = currentVocabIndex === 0;
-            nextVocabButton.disabled = currentVocabIndex === lessonVocabulary.length - 1;
+            prevVocabButton.disabled = currentVocabIndexInLesson === 0;
+            nextVocabButton.disabled = currentVocabIndexInLesson === currentLesson.vocabulary.length - 1;
             
             pronounceButton.disabled = false; 
+            saveWordButton.disabled = false; // Enable save button if vocab is present
         }
 
-        // --- My Vocabulary Functions (Local Storage MVP) ---
-        let currentReviewSessionWords = []; // Words for the current review session
-        let currentReviewWordIndexInSession = 0; // Index for current word in session
+        // --- My Vocabulary Functions (Firestore Integration) ---
+        // Collection reference for user-specific vocabulary in Firestore
+        function getMyVocabCollectionRef() {
+            const appId = firebaseConfig.appId.split(':')[1]; // Extract app ID part
+            // Ensure userId is defined before constructing path
+            if (!userId || userId === 'anonymous') {
+                console.error("UserID is not set for Firestore reference.");
+                return null; // Return null if userId is not valid
+            }
+            return collection(db, `artifacts/${appId}/users/${userId}/my_vocabulary`);
+        }
 
-        function saveCurrentWord() {
-            const currentItem = lessonVocabulary[currentVocabIndex];
-            if (!currentItem) return;
+        async function loadMyVocabulary() {
+            if (!userId || userId === 'anonymous') {
+                mySavedVocabulary = []; // Clear local list if not authenticated
+                console.log("Not authenticated, skipping Firestore vocabulary load.");
+                return;
+            }
+            console.log("Loading vocabulary for user:", userId);
+            try {
+                const vocabCollectionRef = getMyVocabCollectionRef();
+                if (!vocabCollectionRef) { // Handle case where ref is null
+                    console.error("Firestore collection reference is null. Cannot load vocabulary.");
+                    return;
+                }
+                const querySnapshot = await getDocs(vocabCollectionRef);
+                mySavedVocabulary = querySnapshot.docs.map(doc => doc.data());
+                console.log("Loaded vocabulary from Firestore:", mySavedVocabulary);
+            } catch (error) {
+                console.error("Error loading vocabulary from Firestore:", error);
+                showCustomMessageBox(`Lỗi tải từ vựng: ${error.message}. Vui lòng kiểm tra quyền truy cập Firebase Firestore.`);
+            }
+        }
 
-            // Check if word already exists in saved list
-            const exists = mySavedVocabulary.some(word => word.id === currentItem.id);
-            if (exists) {
+        async function saveCurrentWord() {
+            const currentLesson = lessons[currentLessonIndex];
+            if (!currentLesson || currentLesson.vocabulary.length === 0) return;
+            const currentItem = currentLesson.vocabulary[currentVocabIndexInLesson];
+            if (!currentItem || !userId || userId === 'anonymous') {
+                showCustomMessageBox("Vui lòng đăng nhập để lưu từ vựng.");
+                return;
+            }
+
+            // Check if word already exists in saved list (both local and Firestore)
+            const existsLocally = mySavedVocabulary.some(word => word.id === currentItem.id);
+            if (existsLocally) {
                 showCustomMessageBox(`"${currentItem.chinese}" đã có trong Từ Vựng Của Bạn.`);
                 return;
             }
 
-            mySavedVocabulary.push(currentItem);
-            localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary));
-            showCustomMessageBox(`Đã lưu "${currentItem.chinese}" vào Từ Vựng Của Bạn!`);
-            displayMyVocabulary(); // Refresh list in modal if open
+            try {
+                const vocabCollectionRef = getMyVocabCollectionRef();
+                if (!vocabCollectionRef) { // Handle case where ref is null
+                    console.error("Firestore collection reference is null. Cannot save vocabulary.");
+                    return;
+                }
+                // Save to Firestore. Use word.id as document ID for uniqueness and easy lookup.
+                await setDoc(doc(vocabCollectionRef, currentItem.id), currentItem);
+                mySavedVocabulary.push(currentItem); // Add to local array after successful save
+                showCustomMessageBox(`Đã lưu "${currentItem.chinese}" vào Từ Vựng Của Bạn!`);
+                displayMyVocabulary(); // Refresh list in modal if open
+            } catch (error) {
+                console.error("Error saving word to Firestore:", error);
+                showCustomMessageBox(`Lỗi khi lưu từ: ${error.message}. Vui lòng kiểm tra quyền truy cập Firebase Firestore.`);
+            }
         }
 
         function displayMyVocabulary() {
@@ -1085,30 +1309,48 @@
                 vocabItemDiv.innerHTML = `
                     <span>${word.chinese} (${word.pinyin}) - ${word.vietnamese}</span>
                     <div>
-                        <button class="review-btn btn-animation" data-index="${index}">Ôn tập</button>
-                        <button class="delete-btn btn-animation" data-index="${index}">Xóa</button>
+                        <button class="review-btn btn-animation" data-id="${word.id}">Ôn tập</button>
+                        <button class="delete-btn btn-animation" data-id="${word.id}">Xóa</button>
                     </div>
                 `;
                 vocabItemDiv.querySelector('.review-btn').addEventListener('click', (event) => {
-                    const idxToReview = parseInt(event.target.dataset.index);
-                    startReviewSession(idxToReview);
+                    const wordIdToReview = event.target.dataset.id;
+                    const wordToReview = mySavedVocabulary.find(w => w.id === wordIdToReview);
+                    if (wordToReview) {
+                        startReviewSession(wordToReview); // Pass the actual word object
+                    }
                 });
-                vocabItemDiv.querySelector('.delete-btn').addEventListener('click', (event) => {
-                    const idxToDelete = parseInt(event.target.dataset.index);
-                    deleteSavedWord(idxToDelete);
+                vocabItemDiv.querySelector('.delete-btn').addEventListener('click', async (event) => { // Made async for Firestore
+                    const wordIdToDelete = event.target.dataset.id;
+                    await deleteSavedWord(wordIdToDelete); // Await deletion
                 });
                 myVocabList.appendChild(vocabItemDiv);
             });
         }
 
-        function deleteSavedWord(index) {
-            mySavedVocabulary.splice(index, 1); // Remove from array
-            localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary)); // Update local storage
-            displayMyVocabulary(); // Refresh the displayed list
-            showCustomMessageBox("Đã xóa từ vựng.");
+        async function deleteSavedWord(wordId) {
+            if (!userId || userId === 'anonymous') {
+                showCustomMessageBox("Vui lòng đăng nhập để xóa từ vựng.");
+                return;
+            }
+            try {
+                const vocabCollectionRef = getMyVocabCollectionRef();
+                if (!vocabCollectionRef) { // Handle case where ref is null
+                    console.error("Firestore collection reference is null. Cannot delete vocabulary.");
+                    return;
+                }
+                await deleteDoc(doc(vocabCollectionRef, wordId));
+                mySavedVocabulary = mySavedVocabulary.filter(word => word.id !== wordId); // Update local array
+                localStorage.setItem('mySavedVocabulary', JSON.stringify(mySavedVocabulary)); // Update local storage as fallback/sync
+                showCustomMessageBox("Đã xóa từ vựng.");
+                displayMyVocabulary(); // Refresh the displayed list
+            } catch (error) {
+                console.error("Error deleting word from Firestore:", error);
+                showCustomMessageBox(`Lỗi khi xóa từ: ${error.message}. Vui lòng kiểm tra quyền truy cập Firebase Firestore.`);
+            }
         }
 
-        function startReviewSession(startIndex = 0) {
+        function startReviewSession(wordToReview = null) {
             if (mySavedVocabulary.length === 0) {
                 showCustomMessageBox("Chưa có từ vựng để ôn tập.");
                 return;
@@ -1118,8 +1360,13 @@
             reviewFlashcardDisplay.classList.remove('hidden'); // Show flashcard
             reviewControls.classList.remove('hidden'); // Show controls
 
-            // Prepare words for review. For now, just a shuffled copy of all saved words
-            reviewWords = [...mySavedVocabulary].sort(() => Math.random() - 0.5); 
+            if (wordToReview) {
+                // If a specific word is chosen, review only that word.
+                reviewWords = [wordToReview];
+            } else {
+                // If starting a general review, shuffle all saved words
+                reviewWords = [...mySavedVocabulary].sort(() => Math.random() - 0.5); 
+            }
             currentReviewWordIndexInSession = 0;
             showNextFlashcard();
         }
@@ -1150,21 +1397,8 @@
             displayMyVocabulary(); // Refresh the list
         }
 
-        // Review controls handlers
-        easyBtn.addEventListener('click', () => {
-            currentReviewWordIndexInSession++;
-            showNextFlashcard();
-        });
-        hardBtn.addEventListener('click', () => {
-            // For a simple model, just push it to the end of current session for re-review
-            reviewWords.push(reviewWords[currentReviewWordIndexInSession]); 
-            currentReviewWordIndexInSession++;
-            showNextFlashcard();
-        });
-        skipBtn.addEventListener('click', () => {
-            currentReviewWordIndexInSession++;
-            showNextFlashcard();
-        });
+        // Review controls handlers (moved to DOMContentLoaded to be assigned after elements exist)
+        // easyBtn.addEventListener('click', ...); etc.
 
 
         // --- TTS Functions (for settings modal) ---
@@ -1327,7 +1561,8 @@
             if (isListening) {
                 recognition.stop();
             } else {
-                const currentVocab = lessonVocabulary[currentVocabIndex];
+                const currentLesson = lessons[currentLessonIndex];
+                const currentVocab = currentLesson.vocabulary[currentVocabIndexInLesson];
                 const lastClickedPromptType = document.activeElement.dataset.promptType;
                 
                 if (lastClickedPromptType === 'pronunciation_practice' || (currentVocab && practiceInput.value.includes("Luyện nói:"))) { 
@@ -1368,7 +1603,8 @@
             quickLearnBtns.forEach(btn => btn.disabled = true);
 
             try {
-                const currentVocab = lessonVocabulary[currentVocabIndex];
+                const currentLesson = lessons[currentLessonIndex];
+                const currentVocab = currentLesson.vocabulary[currentVocabIndexInLesson];
                 let promptForGemini = userMessage; 
 
                 const clickedButton = document.activeElement; 
@@ -1381,8 +1617,9 @@
                         promptForGemini = `Tạo 3 câu ví dụ khác nhau sử dụng từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}), mỗi ví dụ kèm pinyin và nghĩa tiếng Việt.`;
                     } else if (promptType === 'quiz_question') {
                         promptForGemini = `Đặt một câu hỏi trắc nghiệm hoặc điền vào chỗ trống về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}, nghĩa: ${currentVocab.vietnamese}). Cung cấp đáp án đúng và giải thích ngắn gọn.`;
-                    } else if (promptType === 'grammar_question') { // New grammar question type
-                        promptForGemini = `Giải thích ngữ pháp liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}) hoặc chủ đề ngữ pháp cơ bản cho người mới học tiếng Trung.`;
+                    } else if (promptType === 'grammar_question') { 
+                        const grammarPoint = currentLesson.grammar_points[0] ? currentLesson.grammar_points[0].title : 'điểm ngữ pháp liên quan đến bài học hiện tại';
+                        promptForGemini = `Giải thích ngữ pháp "${grammarPoint}" liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}) hoặc chủ đề ngữ pháp cơ bản cho người mới học tiếng Trung.`;
                     }
                     else if (promptType === 'pronunciation_practice') {
                         promptForGemini = `Người học đã nói "${userMessage}" (từ đang học là "${currentVocab.chinese}"). Bạn là giáo viên phát âm tiếng Trung, hãy đánh giá phát âm này. Chỉ ra lỗi sai (thanh điệu, pinyin, ngữ điệu) và đưa ra gợi ý sửa cụ thể. Nếu phát âm tốt, hãy khen ngợi. Luôn trả lời bằng tiếng Việt.`;
@@ -1454,7 +1691,8 @@
             quickLearnBtns.forEach(button => {
                 button.addEventListener('click', (event) => { 
                     const promptType = event.currentTarget.dataset.promptType; 
-                    const currentVocab = lessonVocabulary[currentVocabIndex]; 
+                    const currentLesson = lessons[currentLessonIndex]; // Get current lesson
+                    const currentVocab = currentLesson.vocabulary[currentVocabIndexInLesson]; // Get current vocab
                     let promptToSend = "";
 
                     if (!currentVocab) {
@@ -1476,7 +1714,9 @@
                     } else if (promptType === 'quiz_question') {
                         promptToSend = `Đặt một câu hỏi ôn tập (ví dụ: trắc nghiệm, điền từ) về cách sử dụng hoặc ý nghĩa của từ vựng tiếng Trung "${currentVocab.chinese}" (${currentVocab.pinyin}) cho người mới học. Cung cấp đáp án đúng và giải thích ngắn gọn.`;
                     } else if (promptType === 'grammar_question') { 
-                        promptToSend = `Giải thích ngữ pháp liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}). Tập trung vào cách dùng trong câu hoặc cấu trúc câu.`;
+                        // Prompt for grammar based on current lesson
+                        const grammarTitle = currentLesson.grammar_points[0] ? currentLesson.grammar_points[0].title : 'ngữ pháp trong bài học này';
+                        promptToSend = `Giải thích chi tiết về ${grammarTitle} liên quan đến từ "${currentVocab.chinese}" (${currentVocab.pinyin}). Hãy đưa ra ví dụ thêm.`;
                     }
                     
                     handleSendPracticeMessage(promptToSend);
@@ -1484,28 +1724,32 @@
             });
 
             if (pronounceButton) pronounceButton.addEventListener('click', () => {
-                const currentItem = lessonVocabulary[currentVocabIndex];
+                const currentLesson = lessons[currentLessonIndex];
+                const currentItem = currentLesson.vocabulary[currentVocabIndexInLesson];
                 if (currentItem) {
                     speakChinese(currentItem.chinese);
                 }
             });
             if (prevVocabButton) prevVocabButton.addEventListener('click', () => {
-                if (currentVocabIndex > 0) {
-                    currentVocabIndex--;
-                    displayCurrentVocab();
+                const currentLesson = lessons[currentLessonIndex];
+                if (currentVocabIndexInLesson > 0) {
+                    currentVocabIndexInLesson--;
+                    displayCurrentVocabInLesson();
                 }
             });
             if (nextVocabButton) nextVocabButton.addEventListener('click', () => {
-                if (currentVocabIndex < lessonVocabulary.length - 1) {
-                    currentVocabIndex++;
-                    displayCurrentVocab();
+                const currentLesson = lessons[currentLessonIndex];
+                if (currentVocabIndexInLesson < currentLesson.vocabulary.length - 1) {
+                    currentVocabIndexInLesson++;
+                    displayCurrentVocabInLesson();
                 }
             });
 
             if (saveWordButton) saveWordButton.addEventListener('click', saveCurrentWord);
 
+            // Settings Modal handlers
             if (openSettingsButton) openSettingsButton.addEventListener('click', () => {
-                settingsModal.classList.remove('hidden');
+                settingsModal.classList.add('visible'); 
                 populateVoiceList(); 
                 if (rateValueSpan && rateSlider) {
                     rateValueSpan.textContent = speechRate.toFixed(1); 
@@ -1513,7 +1757,7 @@
                 }
             });
             if (closeSettingsButton) closeSettingsButton.addEventListener('click', () => {
-                settingsModal.classList.add('hidden');
+                settingsModal.classList.remove('visible');
             });
             if (voiceSelect) voiceSelect.addEventListener('change', (event) => {
                 const selectedVoiceName = event.target.value;
@@ -1525,18 +1769,21 @@
                 rateValueSpan.textContent = speechRate.toFixed(1); 
             });
 
+            // My Vocabulary Modal handlers
             if (openMyVocabButton) openMyVocabButton.addEventListener('click', () => {
-                myVocabModal.classList.remove('hidden');
+                myVocabModal.classList.add('visible'); 
                 displayMyVocabulary(); 
             });
             if (closeMyVocabButton) closeMyVocabButton.addEventListener('click', () => {
-                myVocabModal.classList.add('hidden');
+                myVocabModal.classList.remove('visible');
             });
-
-            if (reviewFlashcardDisplay) reviewFlashcardDisplay.addEventListener('click', () => {
-                flashcardPinyinMeaning.textContent = `${reviewWords[currentReviewWordIndexInSession].pinyin} - ${reviewWords[currentReviewWordIndexInSession].vietnamese}`;
-                flashcardPinyinMeaning.classList.remove('hidden');
-            });
+            // Review Flashcard handlers (only attach if elements exist)
+            if (reviewFlashcardDisplay) {
+                reviewFlashcardDisplay.addEventListener('click', () => {
+                    flashcardPinyinMeaning.textContent = `${reviewWords[currentReviewWordIndexInSession].pinyin} - ${reviewWords[currentReviewWordIndexInSession].vietnamese}`;
+                    flashcardPinyinMeaning.classList.remove('hidden');
+                });
+            }
             if (easyBtn) easyBtn.addEventListener('click', () => {
                 currentReviewWordIndexInSession++;
                 showNextFlashcard();
@@ -1551,11 +1798,37 @@
                 showNextFlashcard();
             });
 
+            // Lesson Select Modal handlers (NEW)
+            if (openLessonSelectButton) openLessonSelectButton.addEventListener('click', () => {
+                lessonSelectModal.classList.add('visible');
+                populateLessonList();
+            });
+            if (closeLessonSelectButton) closeLessonSelectButton.addEventListener('click', () => {
+                lessonSelectModal.classList.remove('visible');
+            });
 
             if (practiceMicrophoneButton) practiceMicrophoneButton.addEventListener('click', toggleListening);
 
-            initializeFirebase(); 
+            initializeFirebase(); // Call initializeFirebase after all elements are assigned and listeners attached
         });
+
+        // Function to populate the Lesson Selection Modal
+        function populateLessonList() {
+            lessonList.innerHTML = ''; // Clear previous list
+            lessons.forEach((lesson, index) => {
+                const lessonItem = document.createElement('div');
+                lessonItem.className = 'modal-list-item';
+                lessonItem.innerHTML = `
+                    <h4>${lesson.title}</h4>
+                    <p>${lesson.description}</p>
+                `;
+                lessonItem.addEventListener('click', () => {
+                    displayCurrentLesson(index); // Load the selected lesson
+                    lessonSelectModal.classList.remove('visible'); // Close modal
+                });
+                lessonList.appendChild(lessonItem);
+            });
+        }
 
     </script>
 </body>
