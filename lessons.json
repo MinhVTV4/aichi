@@ -1,0 +1,97 @@
+[
+  {
+    "id": "hsk1_bai1_chao_hoi",
+    "title": "HSK1 Bài 1: Chào hỏi cơ bản",
+    "description": "Học cách chào hỏi, giới thiệu tên và quốc tịch.",
+    "order": 1,
+    "generated_content_saved": true,
+    "vocabulary": [
+      { "id": "nihao", "chinese": "你好", "pinyin": "Nǐ hǎo", "vietnamese": "Xin chào" },
+      { "id": "xiexie", "chinese": "谢谢", "pinyin": "Xièxie", "vietnamese": "Cảm ơn" },
+      { "id": "zaijian", "chinese": "再见", "pinyin": "Zài jiàn", "vietnamese": "Tạm biệt" },
+      { "id": "duibuqi", "chinese": "对不起", "pinyin": "Duìbuqǐ", "vietnamese": "Xin lỗi" },
+      { "id": "meiguanxi", "chinese": "没关系", "pinyin": "Méi guānxi", "vietnamese": "Không sao" }
+    ],
+    "grammar_points": [
+      { "title": "Đại từ nhân xưng cơ bản (你, 我, 他)", "explanation": "Trong tiếng Trung, đại từ nhân xưng đứng trước động từ hoặc tính từ. Ví dụ: 你好 (Nǐ hǎo - Bạn tốt/Xin chào), 我很好 (Wǒ hěn hǎo - Tôi rất tốt).", "examples": ["你叫什么名字？(Nǐ jiào shénme míngzi?) - Bạn tên là gì?", "我是学生。(Wǒ shì xuéshēng.) - Tôi là học sinh."] },
+      { "title": "Cấu trúc khen ngợi với \"很\"", "explanation": "Phó từ \"很\" (hěn) có nghĩa là \"rất\", thường đứng trước tính từ để bổ nghĩa. Ví dụ: 很好 (hěn hǎo - rất tốt), 很高兴 (hěn gāoxìng - rất vui).", "examples": ["他很高兴。(Tā hěn gāoxìng.) - Anh ấy rất vui.", "她很漂亮。(Tā hěn piàoliang.) - Cô ấy rất đẹp."] }
+    ]
+  },
+  {
+    "id": "hsk1_bai2_gia_dinh",
+    "title": "HSK1 Bài 2: Gia đình",
+    "description": "Học từ vựng về các thành viên trong gia đình và cách giới thiệu họ.",
+    "order": 2,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk1_bai3_so_dem_thoi_gian",
+    "title": "HSK1 Bài 3: Số đếm và thời gian",
+    "description": "Học cách đếm số, nói thời gian và ngày tháng.",
+    "order": 3,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk1_bai4_mua_sam",
+    "title": "HSK1 Bài 4: Mua sắm và giá cả",
+    "description": "Học từ vựng mua sắm, hỏi giá và mặc cả đơn giản.",
+    "order": 4,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk1_bai5_an_uong",
+    "title": "HSK1 Bài 5: Ăn uống và gọi món",
+    "description": "Học từ vựng và mẫu câu gọi món trong nhà hàng.",
+    "order": 5,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk1_bai6_phuong_huong",
+    "title": "HSK1 Bài 6: Phương hướng và địa điểm",
+    "description": "Học cách hỏi và chỉ đường, mô tả vị trí.",
+    "order": 6,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk2_bai1_so_thich",
+    "title": "HSK2 Bài 1: Sở thích và hoạt động",
+    "description": "Học cách nói về sở thích cá nhân và các hoạt động hàng ngày.",
+    "order": 7,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk2_bai2_thoi_tiet",
+    "title": "HSK2 Bài 2: Thời tiết và mùa",
+    "description": "Học từ vựng về thời tiết, các mùa và cách hỏi về thời tiết.",
+    "order": 8,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk2_bai3_du_lich",
+    "title": "HSK2 Bài 3: Du lịch và đi lại",
+    "description": "Học các cụm từ cần thiết khi đi du lịch và sử dụng phương tiện giao thông.",
+    "order": 9,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk2_bai4_kham_benh",
+    "title": "HSK2 Bài 4: Khám bệnh và sức khỏe",
+    "description": "Học từ vựng và mẫu câu cơ bản khi nói về sức khỏe và đi khám bệnh.",
+    "order": 10,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk3_bai1_cong_viec",
+    "title": "HSK3 Bài 1: Công việc và học tập",
+    "description": "Học từ vựng về nghề nghiệp, môi trường làm việc và học tập.",
+    "order": 11,
+    "generated_content_saved": false
+  },
+  {
+    "id": "hsk3_bai2_thanh_pho",
+    "title": "HSK3 Bài 2: Mô tả thành phố",
+    "description": "Học cách mô tả các địa điểm, cảnh quan và cuộc sống thành phố.",
+    "order": 12,
+    "generated_content_saved": false
+  }
+]
